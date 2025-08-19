@@ -22,38 +22,18 @@ Traceback (most recent call last):
     raise CellExecutionError.from_cell_and_msg(cell, exec_reply_content)
 nbclient.exceptions.CellExecutionError: An error occurred while executing the following cell:
 ------------------
-# Crear figura con 1 fila y 4 columnas
-fig, axes = plt.subplots(1, 4, figsize=(20, 5))  
+import tensorflow as tf
 
-for i, var in enumerate(variables):
-    tabla = df[var].value_counts().reset_index()
-    tabla.columns = [var, "Count"]
-    
-    # Reemplazar valores con binary_maps
-    tabla[var] = tabla[var].map(binary_maps[var])
-    
-    # Gráfico
-    axes[i].bar(tabla[var], tabla["Count"], color="skyblue", edgecolor="black")
-    axes[i].set_title(var_names[var], fontsize=12, fontweight="bold")
-    axes[i].set_ylabel("Frecuencia")
-    axes[i].set_xlabel("Categoría")
-    axes[i].tick_params(axis='x', rotation=0)  # rotar etiquetas
-
-# Ajustar espacios
-plt.tight_layout()
-plt.show()
+print("GPU disponible:", tf.config.list_physical_devices('GPU'))
 
 ------------------
 
 
 [1;31m---------------------------------------------------------------------------[0m
-[1;31mNameError[0m                                 Traceback (most recent call last)
-Cell [1;32mIn[19], line 13[0m
-[0;32m     11[0m [38;5;66;03m# Gráfico[39;00m
-[0;32m     12[0m axes[i][38;5;241m.[39mbar(tabla[var], tabla[[38;5;124m"[39m[38;5;124mCount[39m[38;5;124m"[39m], color[38;5;241m=[39m[38;5;124m"[39m[38;5;124mskyblue[39m[38;5;124m"[39m, edgecolor[38;5;241m=[39m[38;5;124m"[39m[38;5;124mblack[39m[38;5;124m"[39m)
-[1;32m---> 13[0m axes[i][38;5;241m.[39mset_title([43mvar_names[49m[var], fontsize[38;5;241m=[39m[38;5;241m12[39m, fontweight[38;5;241m=[39m[38;5;124m"[39m[38;5;124mbold[39m[38;5;124m"[39m)
-[0;32m     14[0m axes[i][38;5;241m.[39mset_ylabel([38;5;124m"[39m[38;5;124mFrecuencia[39m[38;5;124m"[39m)
-[0;32m     15[0m axes[i][38;5;241m.[39mset_xlabel([38;5;124m"[39m[38;5;124mCategoría[39m[38;5;124m"[39m)
+[1;31mModuleNotFoundError[0m                       Traceback (most recent call last)
+Cell [1;32mIn[2], line 1[0m
+[1;32m----> 1[0m [38;5;28;01mimport[39;00m[38;5;250m [39m[38;5;21;01mtensorflow[39;00m[38;5;250m [39m[38;5;28;01mas[39;00m[38;5;250m [39m[38;5;21;01mtf[39;00m
+[0;32m      3[0m [38;5;28mprint[39m([38;5;124m"[39m[38;5;124mGPU disponible:[39m[38;5;124m"[39m, tf[38;5;241m.[39mconfig[38;5;241m.[39mlist_physical_devices([38;5;124m'[39m[38;5;124mGPU[39m[38;5;124m'[39m))
 
-[1;31mNameError[0m: name 'var_names' is not defined
+[1;31mModuleNotFoundError[0m: No module named 'tensorflow'
 

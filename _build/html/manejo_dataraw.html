@@ -1,0 +1,1101 @@
+
+<!DOCTYPE html>
+
+
+<html lang="en" data-content_root="./" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>Preprocesamiento de datos &#8212; Mini_pyr_1</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "";
+  </script>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="_static/styles/theme.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+<link href="_static/styles/bootstrap.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+<link href="_static/styles/pydata-sphinx-theme.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+
+  
+  <link href="_static/vendor/fontawesome/6.5.2/css/all.min.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+  <link rel="preload" as="font" type="font/woff2" crossorigin href="_static/vendor/fontawesome/6.5.2/webfonts/fa-solid-900.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="_static/vendor/fontawesome/6.5.2/webfonts/fa-brands-400.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="_static/vendor/fontawesome/6.5.2/webfonts/fa-regular-400.woff2" />
+
+    <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=03e43079" />
+    <link rel="stylesheet" type="text/css" href="_static/styles/sphinx-book-theme.css?v=eba8b062" />
+    <link rel="stylesheet" type="text/css" href="_static/togglebutton.css?v=13237357" />
+    <link rel="stylesheet" type="text/css" href="_static/copybutton.css?v=76b2166b" />
+    <link rel="stylesheet" type="text/css" href="_static/mystnb.8ecb98da25f57f5357bf6f572d296f466b2cfe2517ffebfabe82451661e28f02.css?v=6644e6bb" />
+    <link rel="stylesheet" type="text/css" href="_static/sphinx-thebe.css?v=4fa983c6" />
+    <link rel="stylesheet" type="text/css" href="_static/sphinx-design.min.css?v=95c83b7e" />
+  
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="_static/scripts/bootstrap.js?digest=dfe6caa3a7d634c4db9b" />
+<link rel="preload" as="script" href="_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b" />
+  <script src="_static/vendor/fontawesome/6.5.2/js/all.min.js?digest=dfe6caa3a7d634c4db9b"></script>
+
+    <script src="_static/documentation_options.js?v=9eb32ce0"></script>
+    <script src="_static/doctools.js?v=9a2dae69"></script>
+    <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="_static/clipboard.min.js?v=a7894cd8"></script>
+    <script src="_static/copybutton.js?v=f281be69"></script>
+    <script src="_static/scripts/sphinx-book-theme.js?v=887ef09a"></script>
+    <script>let toggleHintShow = 'Click to show';</script>
+    <script>let toggleHintHide = 'Click to hide';</script>
+    <script>let toggleOpenOnPrint = 'true';</script>
+    <script src="_static/togglebutton.js?v=4a39c7ea"></script>
+    <script>var togglebuttonSelector = '.toggle, .admonition.dropdown';</script>
+    <script src="_static/design-tabs.js?v=f930bc37"></script>
+    <script>const THEBE_JS_URL = "https://unpkg.com/thebe@0.8.2/lib/index.js"; const thebe_selector = ".thebe,.cell"; const thebe_selector_input = "pre"; const thebe_selector_output = ".output, .cell_output"</script>
+    <script async="async" src="_static/sphinx-thebe.js?v=c100c467"></script>
+    <script>var togglebuttonSelector = '.toggle, .admonition.dropdown';</script>
+    <script>const THEBE_JS_URL = "https://unpkg.com/thebe@0.8.2/lib/index.js"; const thebe_selector = ".thebe,.cell"; const thebe_selector_input = "pre"; const thebe_selector_output = ".output, .cell_output"</script>
+    <script>DOCUMENTATION_OPTIONS.pagename = 'manejo_dataraw';</script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Modelo con sklearn" href="scklearn.html" />
+    <link rel="prev" title="Análisis exploratorio de datos" href="EDA.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+  </head>
+  
+  
+  <body data-bs-spy="scroll" data-bs-target=".bd-toc-nav" data-offset="180" data-bs-root-margin="0px 0px -60%" data-default-mode="">
+
+  
+  
+  <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Skip to main content</a></div>
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>Back to top</button>
+
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          id="pst-primary-sidebar-checkbox"/>
+  <label class="overlay overlay-primary" for="pst-primary-sidebar-checkbox"></label>
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          id="pst-secondary-sidebar-checkbox"/>
+  <label class="overlay overlay-secondary" for="pst-secondary-sidebar-checkbox"></label>
+  
+  <div class="search-button__wrapper">
+    <div class="search-button__overlay"></div>
+    <div class="search-button__search-container">
+<form class="bd-search d-flex align-items-center"
+      action="search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         id="search-input"
+         placeholder="Search this book..."
+         aria-label="Search this book..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form></div>
+  </div>
+
+  <div class="pst-async-banner-revealer d-none">
+  <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
+</div>
+
+  
+    <header class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+    </header>
+  
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+      <div class="bd-sidebar-primary bd-sidebar">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+    
+    
+  </div>
+  
+    <div class="sidebar-primary-items__start sidebar-primary__section">
+        <div class="sidebar-primary-item">
+
+  
+    
+  
+
+<a class="navbar-brand logo" href="intro.html">
+  
+  
+  
+  
+  
+  
+    <p class="title logo__title">Mini_pyr_1</p>
+  
+</a></div>
+        <div class="sidebar-primary-item">
+
+ <script>
+ document.write(`
+   <button class="btn search-button-field search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass"></i>
+    <span class="search-button__default-text">Search</span>
+    <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+   </button>
+ `);
+ </script></div>
+        <div class="sidebar-primary-item"><nav class="bd-links bd-docs-nav" aria-label="Main">
+    <div class="bd-toc-item navbar-nav active">
+        
+        <ul class="nav bd-sidenav bd-sidenav__home-link">
+            <li class="toctree-l1">
+                <a class="reference internal" href="intro.html">
+                    Predicción de prestamos DEFAULT
+                </a>
+            </li>
+        </ul>
+        <ul class="current nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="EDA.html"><strong>Análisis exploratorio de datos</strong></a></li>
+<li class="toctree-l1 current active"><a class="current reference internal" href="#"><strong>Preprocesamiento de datos</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="scklearn.html">Modelo con sklearn</a></li>
+
+
+</ul>
+
+    </div>
+</nav></div>
+    </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+  </div>
+  
+  <div id="rtd-footer-container"></div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main" role="main">
+        
+        
+
+<div class="sbt-scroll-pixel-helper"></div>
+
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article d-print-none">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item"><button class="sidebar-toggle primary-toggle btn btn-sm" title="Toggle primary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <span class="fa-solid fa-bars"></span>
+</button></div>
+      
+    </div>
+  
+  
+    <div class="header-article-items__end">
+      
+        <div class="header-article-item">
+
+<div class="article-header-buttons">
+
+
+
+
+
+<div class="dropdown dropdown-source-buttons">
+  <button class="btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Source repositories">
+    <i class="fab fa-github"></i>
+  </button>
+  <ul class="dropdown-menu">
+      
+      
+      
+      <li><a href="https://github.com/Darally06/MINI_PRY_1.git" target="_blank"
+   class="btn btn-sm btn-source-repository-button dropdown-item"
+   title="Source repository"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fab fa-github"></i>
+  </span>
+<span class="btn__text-container">Repository</span>
+</a>
+</li>
+      
+      
+      
+      
+      <li><a href="https://github.com/Darally06/MINI_PRY_1.git/issues/new?title=Issue%20on%20page%20%2Fmanejo_dataraw.html&body=Your%20issue%20content%20here." target="_blank"
+   class="btn btn-sm btn-source-issues-button dropdown-item"
+   title="Open an issue"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-lightbulb"></i>
+  </span>
+<span class="btn__text-container">Open issue</span>
+</a>
+</li>
+      
+  </ul>
+</div>
+
+
+
+
+
+
+<div class="dropdown dropdown-download-buttons">
+  <button class="btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Download this page">
+    <i class="fas fa-download"></i>
+  </button>
+  <ul class="dropdown-menu">
+      
+      
+      
+      <li><a href="_sources/manejo_dataraw.ipynb" target="_blank"
+   class="btn btn-sm btn-download-source-button dropdown-item"
+   title="Download source file"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-file"></i>
+  </span>
+<span class="btn__text-container">.ipynb</span>
+</a>
+</li>
+      
+      
+      
+      
+      <li>
+<button onclick="window.print()"
+  class="btn btn-sm btn-download-pdf-button dropdown-item"
+  title="Print to PDF"
+  data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-file-pdf"></i>
+  </span>
+<span class="btn__text-container">.pdf</span>
+</button>
+</li>
+      
+  </ul>
+</div>
+
+
+
+
+<button onclick="toggleFullScreen()"
+  class="btn btn-sm btn-fullscreen-button"
+  title="Fullscreen mode"
+  data-bs-placement="bottom" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-expand"></i>
+  </span>
+
+</button>
+
+
+
+<script>
+document.write(`
+  <button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button" title="light/dark" aria-label="light/dark" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="theme-switch fa-solid fa-sun fa-lg" data-mode="light"></i>
+    <i class="theme-switch fa-solid fa-moon fa-lg" data-mode="dark"></i>
+    <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"></i>
+  </button>
+`);
+</script>
+
+
+<script>
+document.write(`
+  <button class="btn btn-sm pst-navbar-icon search-button search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass fa-lg"></i>
+  </button>
+`);
+</script>
+<button class="sidebar-toggle secondary-toggle btn btn-sm" title="Toggle secondary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <span class="fa-solid fa-list"></span>
+</button>
+</div></div>
+      
+    </div>
+  
+</div>
+</div>
+              
+              
+
+<div id="jb-print-docs-body" class="onlyprint">
+    <h1>Preprocesamiento de datos</h1>
+    <!-- Table of contents -->
+    <div id="print-main-content">
+        <div id="jb-print-toc">
+            
+            <div>
+                <h2> Contents </h2>
+            </div>
+            <nav aria-label="Page">
+                <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#reduccion-del-dataset-a-la-variable-objetivo"><strong>Reducción del dataset a la variable objetivo</strong></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#tratamiento-de-variables"><strong>Tratamiento de variables</strong></a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#transformacion-y-agregacion"><em>Transformación y agregación</em></a><ul class="nav section-nav flex-column">
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#codificacion-dummy"><strong>Codificación Dummy</strong></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#variables-de-inversor"><strong>Variables de inversor</strong></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#variables-low-y-high"><strong>Variables _low y _high</strong></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#variable-dti">Variable DTI</a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#variables-tipo-objeto"><strong>Variables tipo objeto</strong></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#tipo-fecha"><strong>Tipo fecha</strong></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#variables-de-frecuencia-de-tiempo"><strong>Variables de frecuencia de tiempo</strong></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#creacion-de-variables-representativas">creacion de variables representativas</a></li>
+</ul>
+</li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#eliminacion-de-variables-identificadoras"><em>Eliminación de variables identificadoras</em></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#valores-nulos"><em>Valores nulos</em></a><ul class="nav section-nav flex-column">
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#variables-con-mas-del-70-de-datos-perdidos"><strong>Variables con más del 70% de datos perdidos</strong></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#variables-meses-desde"><strong>Variables meses desde</strong></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#variables-con-mas-del-50-de-datos-perdidos"><strong>Variables con más del 50% de datos perdidos</strong></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#agrupacion-de-variables-por-caracteristicas"><strong>Agrupación de variables por características</strong></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#variables-restantes-con-valores-nulos"><strong>Variables restantes con valores nulos</strong></a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+            </nav>
+        </div>
+    </div>
+</div>
+
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
+  <section class="tex2jax_ignore mathjax_ignore" id="preprocesamiento-de-datos">
+<h1><strong>Preprocesamiento de datos</strong><a class="headerlink" href="#preprocesamiento-de-datos" title="Link to this heading">#</a></h1>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">tensorflow</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">tf</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;GPU disponible:&quot;</span><span class="p">,</span> <span class="n">tf</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">list_physical_devices</span><span class="p">(</span><span class="s1">&#39;GPU&#39;</span><span class="p">))</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output traceback highlight-ipythontb notranslate"><div class="highlight"><pre><span></span><span class="gt">---------------------------------------------------------------------------</span>
+<span class="ne">ModuleNotFoundError</span><span class="g g-Whitespace">                       </span>Traceback (most recent call last)
+<span class="n">Cell</span> <span class="n">In</span><span class="p">[</span><span class="mi">2</span><span class="p">],</span> <span class="n">line</span> <span class="mi">1</span>
+<span class="ne">----&gt; </span><span class="mi">1</span> <span class="kn">import</span><span class="w"> </span><span class="nn">tensorflow</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">tf</span>
+<span class="g g-Whitespace">      </span><span class="mi">3</span> <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;GPU disponible:&quot;</span><span class="p">,</span> <span class="n">tf</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">list_physical_devices</span><span class="p">(</span><span class="s1">&#39;GPU&#39;</span><span class="p">))</span>
+
+<span class="ne">ModuleNotFoundError</span>: No module named &#39;tensorflow&#39;
+</pre></div>
+</div>
+</div>
+</div>
+<section id="reduccion-del-dataset-a-la-variable-objetivo">
+<h2><strong>Reducción del dataset a la variable objetivo</strong><a class="headerlink" href="#reduccion-del-dataset-a-la-variable-objetivo" title="Link to this heading">#</a></h2>
+<ol class="arabic simple">
+<li><p>Definición de la variable objetivo <code class="docutils literal notranslate"><span class="pre">default</span></code>.</p></li>
+<li><p>Se filtran las filas donde <code class="docutils literal notranslate"><span class="pre">loan_status</span></code> es <em>Charged Off</em> o <em>Fully Paid</em>.</p></li>
+<li><p>Aseguramos que solo estas dos categorías estén presentes en loan_status</p></li>
+<li><p>Se fija: (1) <em>Default</em> (0) <em>Fully Paid</em></p></li>
+<li><p>Eliminamos la columna <code class="docutils literal notranslate"><span class="pre">loan_status</span></code> y creamos una nueva columna <code class="docutils literal notranslate"><span class="pre">default</span></code></p></li>
+</ol>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># Definición de la variable objetivo `default`</span>
+
+<span class="n">df</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="n">df</span><span class="p">[</span><span class="s1">&#39;loan_status&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">isin</span><span class="p">([</span><span class="s1">&#39;Charged Off&#39;</span><span class="p">,</span> <span class="s1">&#39;Fully Paid&#39;</span><span class="p">])]</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+<span class="n">df</span><span class="p">[</span><span class="s1">&#39;default&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="s1">&#39;loan_status&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">apply</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="mi">1</span> <span class="k">if</span> <span class="n">x</span> <span class="o">==</span> <span class="s1">&#39;Charged Off&#39;</span> <span class="k">else</span> <span class="mi">0</span><span class="p">)</span>
+<span class="n">df</span><span class="o">.</span><span class="n">drop</span><span class="p">(</span><span class="n">columns</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;loan_status&#39;</span><span class="p">],</span> <span class="n">inplace</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Dimensiones del DataFrame con la variable original&quot;</span><span class="p">,</span> <span class="n">df</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Dimensiones del DataFrame con la variable original (1345310, 151)
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Información del DataFrame:&quot;</span><span class="p">)</span>
+<span class="n">df</span><span class="o">.</span><span class="n">info</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Información del DataFrame:
+&lt;class &#39;pandas.core.frame.DataFrame&#39;&gt;
+Index: 1345310 entries, 0 to 2260697
+Columns: 151 entries, id to default
+dtypes: float64(113), int64(1), object(37)
+memory usage: 1.5+ GB
+</pre></div>
+</div>
+</div>
+</div>
+</section>
+<section id="tratamiento-de-variables">
+<h2><strong>Tratamiento de variables</strong><a class="headerlink" href="#tratamiento-de-variables" title="Link to this heading">#</a></h2>
+<section id="transformacion-y-agregacion">
+<h3><em>Transformación y agregación</em><a class="headerlink" href="#transformacion-y-agregacion" title="Link to this heading">#</a></h3>
+<section id="codificacion-dummy">
+<h4><strong>Codificación Dummy</strong><a class="headerlink" href="#codificacion-dummy" title="Link to this heading">#</a></h4>
+<p>Codificación de variables tipo objeto de dos o tres categorias como variables dummy. Se eliminan del dataset las variables tipo objeto.</p>
+<p>Conversion a variables dummy:</p>
+<div class="pst-scrollable-table-container"><table class="table">
+<thead>
+<tr class="row-odd"><th class="head"><p>Variable</p></th>
+<th class="head"><p>Categorías</p></th>
+<th class="head"><p>Codificación</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">debt_settlement_flag</span></code></p></td>
+<td><p>‘Y’ - ‘N’</p></td>
+<td><p>1 - 0</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">term</span></code></p></td>
+<td><p>‘36 months’ - ‘60 months’</p></td>
+<td><p>0-1</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">initial_list_status</span></code></p></td>
+<td><p>‘w’ - ‘f’</p></td>
+<td><p>0-1</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">application_type</span></code></p></td>
+<td><p>‘Individual’ - ‘Joint App’</p></td>
+<td><p>0-1</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">disbursement_method</span></code></p></td>
+<td><p>‘Cash’ - ‘DirectPay’`</p></td>
+<td><p>0-1</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">verification_status</span></code></p></td>
+<td><p>‘Not Verified’ - ‘Source Verified’ - ‘Verified’</p></td>
+<td><p>0-1-2</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1">#Variables binarias con Y/N o y/n</span>
+<span class="n">df</span><span class="p">[</span><span class="s1">&#39;had_settlement&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="s1">&#39;debt_settlement_flag&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">apply</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="mi">1</span> <span class="k">if</span> <span class="n">x</span><span class="o">==</span><span class="s1">&#39;Y&#39;</span> <span class="k">else</span> <span class="mi">0</span><span class="p">)</span>
+
+<span class="c1"># Diccionarios de mapeo para variables binarias categoricas</span>
+<span class="n">binary_maps</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s1">&#39;term&#39;</span><span class="p">:</span> <span class="p">{</span><span class="s1">&#39; 36 months&#39;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span> <span class="s1">&#39; 60 months&#39;</span><span class="p">:</span> <span class="mi">1</span><span class="p">},</span>
+    <span class="s1">&#39;initial_list_status&#39;</span><span class="p">:</span> <span class="p">{</span><span class="s1">&#39;w&#39;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span> <span class="s1">&#39;f&#39;</span><span class="p">:</span> <span class="mi">1</span><span class="p">},</span>
+    <span class="s1">&#39;application_type&#39;</span><span class="p">:</span> <span class="p">{</span><span class="s1">&#39;Individual&#39;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span> <span class="s1">&#39;Joint App&#39;</span><span class="p">:</span> <span class="mi">1</span><span class="p">},</span>
+    <span class="s1">&#39;disbursement_method&#39;</span><span class="p">:</span> <span class="p">{</span><span class="s1">&#39;Cash&#39;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span> <span class="s1">&#39;DirectPay&#39;</span><span class="p">:</span> <span class="mi">1</span><span class="p">},</span>
+    <span class="s1">&#39;verification_status&#39;</span><span class="p">:</span> <span class="p">{</span><span class="s1">&#39;Not Verified&#39;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span> <span class="s1">&#39;Source Verified&#39;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span><span class="s1">&#39;Verified&#39;</span><span class="p">:</span> <span class="mi">2</span><span class="p">},</span>
+<span class="p">}</span>
+<span class="c1"># Aplicar el mapeo</span>
+<span class="k">for</span> <span class="n">col</span><span class="p">,</span> <span class="n">mapping</span> <span class="ow">in</span> <span class="n">binary_maps</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+    <span class="n">df</span><span class="p">[</span><span class="n">col</span> <span class="o">+</span> <span class="s1">&#39;_num&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="n">col</span><span class="p">]</span><span class="o">.</span><span class="n">map</span><span class="p">(</span><span class="n">mapping</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># Eliminar columnas originales</span>
+<span class="n">df</span><span class="o">.</span><span class="n">drop</span><span class="p">(</span><span class="n">columns</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;pymnt_plan&#39;</span><span class="p">,</span> <span class="s1">&#39;hardship_flag&#39;</span><span class="p">,</span> <span class="s1">&#39;debt_settlement_flag&#39;</span><span class="p">],</span> <span class="n">inplace</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="n">df</span><span class="o">.</span><span class="n">drop</span><span class="p">(</span><span class="n">columns</span><span class="o">=</span><span class="n">binary_maps</span><span class="o">.</span><span class="n">keys</span><span class="p">(),</span> <span class="n">inplace</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+</section>
+<section id="variables-de-inversor">
+<h4><strong>Variables de inversor</strong><a class="headerlink" href="#variables-de-inversor" title="Link to this heading">#</a></h4>
+<p>Las variables ‘_inv’ representan un valor dado por la perspectiva de inversores. Se cambia por la diferencia entre el valor original y el sugerido.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># Lista de columnas que terminan en _inv</span>
+<span class="n">inv_cols</span> <span class="o">=</span> <span class="p">[</span><span class="n">col</span> <span class="k">for</span> <span class="n">col</span> <span class="ow">in</span> <span class="n">df</span><span class="o">.</span><span class="n">columns</span> <span class="k">if</span> <span class="n">col</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s1">&#39;_inv&#39;</span><span class="p">)]</span>
+
+<span class="c1"># Eliminarlas</span>
+<span class="n">df</span><span class="o">.</span><span class="n">drop</span><span class="p">(</span><span class="n">columns</span><span class="o">=</span><span class="n">inv_cols</span><span class="p">,</span> <span class="n">inplace</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+</section>
+<section id="variables-low-y-high">
+<h4><strong>Variables _low y _high</strong><a class="headerlink" href="#variables-low-y-high" title="Link to this heading">#</a></h4>
+<p>Representan los limites entre rangos de un cliente. Se toma la media entre los valores.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># Buscar todas las columnas que terminan en _low</span>
+<span class="n">low_cols</span> <span class="o">=</span> <span class="p">[</span><span class="n">col</span> <span class="k">for</span> <span class="n">col</span> <span class="ow">in</span> <span class="n">df</span><span class="o">.</span><span class="n">columns</span> <span class="k">if</span> <span class="n">col</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s1">&#39;_low&#39;</span><span class="p">)]</span>
+
+<span class="k">for</span> <span class="n">low_col</span> <span class="ow">in</span> <span class="n">low_cols</span><span class="p">:</span>
+    <span class="n">high_col</span> <span class="o">=</span> <span class="n">low_col</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s1">&#39;_low&#39;</span><span class="p">,</span> <span class="s1">&#39;_high&#39;</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">high_col</span> <span class="ow">in</span> <span class="n">df</span><span class="o">.</span><span class="n">columns</span><span class="p">:</span>
+        <span class="c1"># Crear columna promedio</span>
+        <span class="n">mean_col</span> <span class="o">=</span> <span class="n">low_col</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s1">&#39;_low&#39;</span><span class="p">,</span> <span class="s1">&#39;_mean&#39;</span><span class="p">)</span>
+        <span class="n">df</span><span class="p">[</span><span class="n">mean_col</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">round</span><span class="p">((</span><span class="n">df</span><span class="p">[</span><span class="n">low_col</span><span class="p">]</span> <span class="o">+</span> <span class="n">df</span><span class="p">[</span><span class="n">high_col</span><span class="p">])</span> <span class="o">/</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span>
+        <span class="n">df</span><span class="o">.</span><span class="n">drop</span><span class="p">(</span><span class="n">columns</span><span class="o">=</span><span class="p">[</span><span class="n">low_col</span><span class="p">,</span> <span class="n">high_col</span><span class="p">],</span> <span class="n">inplace</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+<span class="c1"># Verificar las nuevas columnas</span>
+<span class="nb">print</span><span class="p">([</span><span class="n">col</span> <span class="k">for</span> <span class="n">col</span> <span class="ow">in</span> <span class="n">df</span><span class="o">.</span><span class="n">columns</span> <span class="k">if</span> <span class="n">col</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s1">&#39;_mean&#39;</span><span class="p">)])</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>[&#39;fico_range_mean&#39;, &#39;last_fico_range_mean&#39;, &#39;sec_app_fico_range_mean&#39;]
+</pre></div>
+</div>
+</div>
+</div>
+</section>
+<section id="variable-dti">
+<h4>Variable DTI<a class="headerlink" href="#variable-dti" title="Link to this heading">#</a></h4>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># Reemplazar -1 y 999 por NaN</span>
+<span class="n">df</span><span class="p">[</span><span class="s1">&#39;dti&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="s1">&#39;dti&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">replace</span><span class="p">([</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">999</span><span class="p">],</span> <span class="n">np</span><span class="o">.</span><span class="n">nan</span><span class="p">)</span>
+<span class="n">df</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">df</span><span class="p">[</span><span class="s1">&#39;dti&#39;</span><span class="p">]</span> <span class="o">&gt;</span> <span class="mi">100</span><span class="p">,</span> <span class="s1">&#39;dti&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">nan</span>
+<span class="n">df</span><span class="p">[</span><span class="s1">&#39;dti&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">isna</span><span class="p">()</span><span class="o">.</span><span class="n">value_counts</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>dti
+False    1344401
+True         909
+Name: count, dtype: int64
+</pre></div>
+</div>
+</div>
+</div>
+</section>
+<section id="variables-tipo-objeto">
+<h4><strong>Variables tipo objeto</strong><a class="headerlink" href="#variables-tipo-objeto" title="Link to this heading">#</a></h4>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># Extraer el número de sub_grade y obtener el número de sub_grade</span>
+<span class="n">df</span><span class="p">[</span><span class="s1">&#39;sub_grade_num&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="s1">&#39;sub_grade&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">str</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">int</span><span class="p">)</span>
+<span class="n">df</span><span class="o">.</span><span class="n">drop</span><span class="p">(</span><span class="n">columns</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;sub_grade&#39;</span><span class="p">],</span> <span class="n">inplace</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+</section>
+<section id="tipo-fecha">
+<h4><strong>Tipo fecha</strong><a class="headerlink" href="#tipo-fecha" title="Link to this heading">#</a></h4>
+<p>Transformación de variables tipo MM-YYYY en String, a dos variables tipo DateTime ‘_year’ y ‘_month’</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># Convertir columnas de fecha y extraer año y mes</span>
+<span class="n">date_cols</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;issue_d&#39;</span><span class="p">,</span> <span class="s1">&#39;earliest_cr_line&#39;</span><span class="p">,</span> <span class="s1">&#39;last_pymnt_d&#39;</span><span class="p">,</span> <span class="s1">&#39;last_credit_pull_d&#39;</span><span class="p">]</span>
+<span class="k">for</span> <span class="n">col</span> <span class="ow">in</span> <span class="n">date_cols</span><span class="p">:</span>
+    <span class="n">df</span><span class="p">[</span><span class="n">col</span><span class="p">]</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">to_datetime</span><span class="p">(</span><span class="n">df</span><span class="p">[</span><span class="n">col</span><span class="p">],</span> <span class="nb">format</span><span class="o">=</span><span class="s2">&quot;%b-%Y&quot;</span><span class="p">,</span> <span class="n">errors</span><span class="o">=</span><span class="s1">&#39;coerce&#39;</span><span class="p">)</span>
+<span class="c1"># generar año y mes en un solo paso y concatenar</span>
+<span class="n">new_features</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">concat</span><span class="p">(</span>
+    <span class="p">[</span><span class="n">df</span><span class="p">[</span><span class="n">col</span><span class="p">]</span><span class="o">.</span><span class="n">dt</span><span class="o">.</span><span class="n">year</span><span class="o">.</span><span class="n">rename</span><span class="p">(</span><span class="n">col</span> <span class="o">+</span> <span class="s2">&quot;_year&quot;</span><span class="p">)</span> <span class="k">for</span> <span class="n">col</span> <span class="ow">in</span> <span class="n">date_cols</span><span class="p">]</span> <span class="o">+</span>
+    <span class="p">[</span><span class="n">df</span><span class="p">[</span><span class="n">col</span><span class="p">]</span><span class="o">.</span><span class="n">dt</span><span class="o">.</span><span class="n">month</span><span class="o">.</span><span class="n">rename</span><span class="p">(</span><span class="n">col</span> <span class="o">+</span> <span class="s2">&quot;_month&quot;</span><span class="p">)</span> <span class="k">for</span> <span class="n">col</span> <span class="ow">in</span> <span class="n">date_cols</span><span class="p">],</span>
+    <span class="n">axis</span><span class="o">=</span><span class="mi">1</span>
+<span class="p">)</span>
+
+<span class="c1"># concatenar con el dataframe original y eliminar las columnas originales</span>
+<span class="n">df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">concat</span><span class="p">([</span><span class="n">df</span><span class="o">.</span><span class="n">drop</span><span class="p">(</span><span class="n">columns</span><span class="o">=</span><span class="n">date_cols</span><span class="p">),</span> <span class="n">new_features</span><span class="p">],</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+</section>
+<section id="variables-de-frecuencia-de-tiempo">
+<h4><strong>Variables de frecuencia de tiempo</strong><a class="headerlink" href="#variables-de-frecuencia-de-tiempo" title="Link to this heading">#</a></h4>
+<p>Mapeo y transformación a variable tipo numérica</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># Creamos un diccionario de mapeo</span>
+<span class="n">emp_map</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s1">&#39;10+ years&#39;</span><span class="p">:</span> <span class="mi">10</span><span class="p">,</span>
+    <span class="s1">&#39;9 years&#39;</span><span class="p">:</span> <span class="mi">9</span><span class="p">,</span>
+    <span class="s1">&#39;8 years&#39;</span><span class="p">:</span> <span class="mi">8</span><span class="p">,</span>
+    <span class="s1">&#39;7 years&#39;</span><span class="p">:</span> <span class="mi">7</span><span class="p">,</span>
+    <span class="s1">&#39;6 years&#39;</span><span class="p">:</span> <span class="mi">6</span><span class="p">,</span>
+    <span class="s1">&#39;5 years&#39;</span><span class="p">:</span> <span class="mi">5</span><span class="p">,</span>
+    <span class="s1">&#39;4 years&#39;</span><span class="p">:</span> <span class="mi">4</span><span class="p">,</span>
+    <span class="s1">&#39;3 years&#39;</span><span class="p">:</span> <span class="mi">3</span><span class="p">,</span>
+    <span class="s1">&#39;2 years&#39;</span><span class="p">:</span> <span class="mi">2</span><span class="p">,</span>
+    <span class="s1">&#39;1 year&#39;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
+    <span class="s1">&#39;&lt; 1 year&#39;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
+    <span class="n">np</span><span class="o">.</span><span class="n">nan</span><span class="p">:</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span>  <span class="c1"># Asignamos NaN a &#39;n/a&#39;</span>
+<span class="p">}</span>
+<span class="n">df</span><span class="p">[</span><span class="s1">&#39;emp_length_num&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="s1">&#39;emp_length&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">map</span><span class="p">(</span><span class="n">emp_map</span><span class="p">)</span>
+<span class="c1"># Eliminamos la columna original</span>
+<span class="n">df</span><span class="o">.</span><span class="n">drop</span><span class="p">(</span><span class="n">columns</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;emp_length&#39;</span><span class="p">],</span> <span class="n">inplace</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+</section>
+<section id="creacion-de-variables-representativas">
+<h4>creacion de variables representativas<a class="headerlink" href="#creacion-de-variables-representativas" title="Link to this heading">#</a></h4>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># Agregacion y eliminacion </span>
+<span class="n">df</span><span class="p">[</span><span class="s1">&#39;payment_effiency&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="s1">&#39;total_rec_prncp&#39;</span><span class="p">]</span><span class="o">/</span><span class="n">df</span><span class="p">[</span><span class="s1">&#39;total_pymnt&#39;</span><span class="p">]</span>
+<span class="n">df</span><span class="p">[</span><span class="s1">&#39;loan_gap&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="s1">&#39;loan_amnt&#39;</span><span class="p">]</span> <span class="o">-</span> <span class="n">df</span><span class="p">[</span><span class="s1">&#39;funded_amnt&#39;</span><span class="p">]</span>
+
+
+<span class="n">df</span><span class="o">.</span><span class="n">drop</span><span class="p">(</span><span class="n">columns</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;collection_recovery_fee&#39;</span><span class="p">,</span><span class="s1">&#39;loan_amnt&#39;</span><span class="p">,</span>
+                 <span class="s1">&#39;open_acc&#39;</span><span class="p">,</span>
+                 <span class="s1">&#39;avg_cur_bal&#39;</span><span class="p">,</span> <span class="s1">&#39;pub_rec&#39;</span><span class="p">,</span> <span class="s1">&#39;mths_since_rcnt_il&#39;</span>
+                 <span class="p">],</span> <span class="n">inplace</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+</section>
+</section>
+<section id="eliminacion-de-variables-identificadoras">
+<h3><em>Eliminación de variables identificadoras</em><a class="headerlink" href="#eliminacion-de-variables-identificadoras" title="Link to this heading">#</a></h3>
+<p>Se eliminan las variables que permiten diferenciar entre cada registro como ‘id’, ‘url’, ‘member:id’</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">df</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">drop</span><span class="p">(</span><span class="n">columns</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;id&#39;</span><span class="p">,</span><span class="s1">&#39;url&#39;</span><span class="p">,</span><span class="s1">&#39;emp_title&#39;</span><span class="p">,</span><span class="s1">&#39;member_id&#39;</span><span class="p">,</span> <span class="s1">&#39;title&#39;</span><span class="p">,</span> <span class="s1">&#39;zip_code&#39;</span><span class="p">,</span><span class="s1">&#39;addr_state&#39;</span><span class="p">,</span>
+                      <span class="s1">&#39;member_id&#39;</span><span class="p">,</span> <span class="s1">&#39;policy_code&#39;</span><span class="p">])</span>
+</pre></div>
+</div>
+</div>
+</div>
+</section>
+<hr class="docutils" />
+<section id="valores-nulos">
+<h3><em>Valores nulos</em><a class="headerlink" href="#valores-nulos" title="Link to this heading">#</a></h3>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># Conteo de variables con valores faltantes</span>
+<span class="n">missing</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">isnull</span><span class="p">()</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span><span class="o">.</span><span class="n">sort_values</span><span class="p">(</span><span class="n">ascending</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+<span class="n">missing</span> <span class="o">=</span> <span class="n">missing</span><span class="p">[</span><span class="n">missing</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">]</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Variables con valores faltantes:&quot;</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">missing</span><span class="p">))</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Variables con valores faltantes: 100
+</pre></div>
+</div>
+</div>
+</div>
+<section id="variables-con-mas-del-70-de-datos-perdidos">
+<h4><strong>Variables con más del 70% de datos perdidos</strong><a class="headerlink" href="#variables-con-mas-del-70-de-datos-perdidos" title="Link to this heading">#</a></h4>
+<p>Se eliminaran por ser poco informativas y difíciles de imputar.<br />
+Variables como ‘pymnt’, ‘hardship’, ‘settlement’, representadas por el booleano anteriormente codificado.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># Missing 70%</span>
+<span class="n">missing</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">isnull</span><span class="p">()</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span><span class="o">.</span><span class="n">sort_values</span><span class="p">(</span><span class="n">ascending</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+<span class="n">umbral</span> <span class="o">=</span> <span class="mf">0.7</span> <span class="o">*</span> <span class="nb">len</span><span class="p">(</span><span class="n">df</span><span class="p">)</span>
+<span class="n">faltan_70</span><span class="o">=</span> <span class="n">missing</span><span class="p">[</span><span class="n">missing</span> <span class="o">&gt;</span> <span class="n">umbral</span><span class="p">]</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Columnas con más del 70</span><span class="si">% d</span><span class="s2">e valores faltantes:&quot;</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">faltan_70</span><span class="p">))</span>
+
+<span class="n">df</span><span class="o">.</span><span class="n">drop</span><span class="p">(</span><span class="n">columns</span><span class="o">=</span><span class="n">faltan_70</span><span class="o">.</span><span class="n">index</span><span class="p">,</span> <span class="n">inplace</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Columnas con más del 70% de valores faltantes: 40
+</pre></div>
+</div>
+</div>
+</div>
+</section>
+<section id="variables-meses-desde">
+<h4><strong>Variables meses desde</strong><a class="headerlink" href="#variables-meses-desde" title="Link to this heading">#</a></h4>
+<p>Las variables que indican meses desde alguna acción.
+Si existen NA si no tienen acción se llenan como -1 para indicar que no paso o no es el caso</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># Variable since_last</span>
+<span class="n">since_last</span> <span class="o">=</span> <span class="p">[</span><span class="n">col</span> <span class="k">for</span> <span class="n">col</span> <span class="ow">in</span> <span class="n">df</span><span class="o">.</span><span class="n">columns</span> <span class="k">if</span> <span class="s1">&#39;since&#39;</span> <span class="ow">in</span> <span class="n">col</span><span class="o">.</span><span class="n">lower</span><span class="p">()]</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Variables que contienen &#39;since&#39;:&quot;</span><span class="p">,</span> <span class="n">since_last</span><span class="p">)</span>
+<span class="c1"># Imputar valores faltantes en las variables &#39;since_last&#39; con -1</span>
+<span class="n">df</span><span class="p">[</span><span class="n">since_last</span><span class="p">]</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="n">since_last</span><span class="p">]</span><span class="o">.</span><span class="n">fillna</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Variables que contienen &#39;since&#39;: [&#39;mths_since_last_delinq&#39;, &#39;mths_since_recent_bc&#39;, &#39;mths_since_recent_inq&#39;, &#39;mths_since_recent_revol_delinq&#39;]
+</pre></div>
+</div>
+</div>
+</div>
+</section>
+<section id="variables-con-mas-del-50-de-datos-perdidos">
+<h4><strong>Variables con más del 50% de datos perdidos</strong><a class="headerlink" href="#variables-con-mas-del-50-de-datos-perdidos" title="Link to this heading">#</a></h4>
+<p>Se agrupan variables por tipo, codificando como flags y un resumen por categorías.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># Missing 50%</span>
+<span class="n">missing</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">isnull</span><span class="p">()</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span><span class="o">.</span><span class="n">sort_values</span><span class="p">(</span><span class="n">ascending</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+<span class="n">umbral</span> <span class="o">=</span> <span class="mf">0.5</span><span class="o">*</span> <span class="nb">len</span><span class="p">(</span><span class="n">df</span><span class="p">)</span>
+<span class="n">faltan_50</span><span class="o">=</span> <span class="n">missing</span><span class="p">[</span><span class="n">missing</span> <span class="o">&gt;</span> <span class="n">umbral</span><span class="p">]</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Columnas con más del 50</span><span class="si">% d</span><span class="s2">e valores faltantes:&quot;</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">faltan_50</span><span class="p">))</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Columnas con más del 50% de valores faltantes: 13
+</pre></div>
+</div>
+</div>
+</div>
+</section>
+<section id="agrupacion-de-variables-por-caracteristicas">
+<h4><strong>Agrupación de variables por características</strong><a class="headerlink" href="#agrupacion-de-variables-por-caracteristicas" title="Link to this heading">#</a></h4>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1">#gruparon en los scores</span>
+<span class="n">delinq_cols</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;num_tl_30dpd&#39;</span><span class="p">,</span><span class="s1">&#39;num_accts_ever_120_pd&#39;</span><span class="p">]</span>
+<span class="n">credit_hist_cols</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;mo_sin_old_il_acct&#39;</span><span class="p">,</span><span class="s1">&#39;mo_sin_old_rev_tl_op&#39;</span><span class="p">,</span><span class="s1">&#39;mo_sin_rcnt_rev_tl_op&#39;</span><span class="p">,</span><span class="s1">&#39;mo_sin_rcnt_tl&#39;</span><span class="p">,</span>
+                    <span class="s1">&#39;num_actv_rev_tl&#39;</span><span class="p">,</span><span class="s1">&#39;num_actv_bc_tl&#39;</span><span class="p">,</span><span class="s1">&#39;num_op_rev_tl&#39;</span><span class="p">,</span><span class="s1">&#39;num_il_tl&#39;</span><span class="p">,</span><span class="s1">&#39;num_bc_tl&#39;</span><span class="p">,</span>
+                    <span class="s1">&#39;num_rev_accts&#39;</span><span class="p">,</span><span class="s1">&#39;num_rev_tl_bal_gt_0&#39;</span><span class="p">,</span><span class="s1">&#39;tot_cur_bal&#39;</span><span class="p">,</span><span class="s1">&#39;total_il_high_credit_limit&#39;</span><span class="p">,</span>
+                    <span class="s1">&#39;total_rev_hi_lim&#39;</span><span class="p">]</span>
+<span class="n">balances_cols</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;percent_bc_gt_75&#39;</span><span class="p">,</span><span class="s1">&#39;bc_open_to_buy&#39;</span><span class="p">,</span><span class="s1">&#39;total_bal_ex_mort&#39;</span><span class="p">,</span><span class="s1">&#39;total_bc_limit&#39;</span><span class="p">]</span>
+<span class="n">recent_activity_cols</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;last_pymnt_d_month&#39;</span><span class="p">,</span><span class="s1">&#39;last_pymnt_d_year&#39;</span><span class="p">,</span>
+                        <span class="s1">&#39;last_credit_pull_d_month&#39;</span><span class="p">,</span><span class="s1">&#39;last_credit_pull_d_year&#39;</span><span class="p">,</span><span class="s1">&#39;inq_last_6mths&#39;</span><span class="p">]</span>
+<span class="n">credit_util_cols</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;il_util&#39;</span><span class="p">]</span>
+
+
+<span class="n">open_acc_cols</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;open_acc_6m&#39;</span><span class="p">,</span> <span class="s1">&#39;open_il_12m&#39;</span><span class="p">,</span> <span class="s1">&#39;open_il_24m&#39;</span><span class="p">,</span> <span class="s1">&#39;open_rv_24m&#39;</span><span class="p">]</span>
+<span class="n">inq_cols</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;inq_last_12m&#39;</span><span class="p">,</span> <span class="s1">&#39;inq_fi&#39;</span><span class="p">]</span>
+<span class="n">balance_cols</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;total_cu_tl&#39;</span><span class="p">]</span>
+
+<span class="c1"># Eliminar columnas originales de scores</span>
+<span class="n">df</span><span class="o">.</span><span class="n">drop</span><span class="p">(</span><span class="n">columns</span><span class="o">=</span><span class="n">delinq_cols</span> <span class="o">+</span> <span class="n">credit_hist_cols</span> <span class="o">+</span> <span class="n">balances_cols</span> <span class="o">+</span> <span class="n">recent_activity_cols</span><span class="o">+</span> <span class="n">credit_util_cols</span> <span class="o">+</span> <span class="n">open_acc_cols</span> <span class="o">+</span> <span class="n">inq_cols</span> <span class="o">+</span> <span class="n">balance_cols</span><span class="p">,</span> <span class="n">inplace</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+</section>
+<section id="variables-restantes-con-valores-nulos">
+<h4><strong>Variables restantes con valores nulos</strong><a class="headerlink" href="#variables-restantes-con-valores-nulos" title="Link to this heading">#</a></h4>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># Conteo de variables con valores faltantes</span>
+<span class="n">missing</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">isnull</span><span class="p">()</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span><span class="o">.</span><span class="n">sort_values</span><span class="p">(</span><span class="n">ascending</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+<span class="n">missing</span> <span class="o">=</span> <span class="n">missing</span><span class="p">[</span><span class="n">missing</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">]</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Variables con valores faltantes:&quot;</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">missing</span><span class="p">))</span>
+<span class="n">table</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">missing</span><span class="p">,</span> <span class="n">columns</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;missing_count&#39;</span><span class="p">])</span>
+<span class="n">table</span><span class="p">[</span><span class="s1">&#39;percentage&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="n">table</span><span class="p">[</span><span class="s1">&#39;missing_count&#39;</span><span class="p">]</span> <span class="o">/</span> <span class="nb">len</span><span class="p">(</span><span class="n">df</span><span class="p">))</span> <span class="o">*</span> <span class="mi">100</span>
+<span class="n">table</span><span class="o">.</span><span class="n">sort_values</span><span class="p">(</span><span class="n">by</span><span class="o">=</span><span class="s1">&#39;percentage&#39;</span><span class="p">,</span> <span class="n">ascending</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">inplace</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">table</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Variables con valores faltantes: 23
+                            missing_count  percentage
+all_util                           807765   60.043038
+open_rv_12m                        807712   60.039099
+open_act_il                        807712   60.039099
+total_bal_il                       807712   60.039099
+max_bal_bc                         807712   60.039099
+num_tl_120dpd_2m                   117401    8.726688
+pct_tl_nvr_dlq                      67681    5.030885
+tot_coll_amt                        67527    5.019438
+num_tl_90g_dpd_24m                  67527    5.019438
+num_tl_op_past_12m                  67527    5.019438
+tot_hi_cred_lim                     67527    5.019438
+bc_util                             61912    4.602062
+num_bc_sats                         55841    4.150791
+num_sats                            55841    4.150791
+mort_acc                            47281    3.514506
+acc_open_past_24mths                47281    3.514506
+dti                                   909    0.067568
+revol_util                            857    0.063703
+payment_effiency                      844    0.062736
+pub_rec_bankruptcies                  697    0.051810
+collections_12_mths_ex_med             56    0.004163
+chargeoff_within_12_mths               56    0.004163
+tax_liens                              39    0.002899
+</pre></div>
+</div>
+</div>
+</div>
+<hr class="docutils" />
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">df</span><span class="o">.</span><span class="n">info</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>&lt;class &#39;pandas.core.frame.DataFrame&#39;&gt;
+Index: 1345310 entries, 0 to 2260697
+Data columns (total 64 columns):
+ #   Column                          Non-Null Count    Dtype  
+---  ------                          --------------    -----  
+ 0   funded_amnt                     1345310 non-null  float64
+ 1   int_rate                        1345310 non-null  float64
+ 2   installment                     1345310 non-null  float64
+ 3   grade                           1345310 non-null  object 
+ 4   home_ownership                  1345310 non-null  object 
+ 5   annual_inc                      1345310 non-null  float64
+ 6   purpose                         1345310 non-null  object 
+ 7   dti                             1344401 non-null  float64
+ 8   delinq_2yrs                     1345310 non-null  float64
+ 9   mths_since_last_delinq          1345310 non-null  float64
+ 10  revol_bal                       1345310 non-null  float64
+ 11  revol_util                      1344453 non-null  float64
+ 12  total_acc                       1345310 non-null  float64
+ 13  out_prncp                       1345310 non-null  float64
+ 14  total_pymnt                     1345310 non-null  float64
+ 15  total_rec_prncp                 1345310 non-null  float64
+ 16  total_rec_int                   1345310 non-null  float64
+ 17  total_rec_late_fee              1345310 non-null  float64
+ 18  recoveries                      1345310 non-null  float64
+ 19  last_pymnt_amnt                 1345310 non-null  float64
+ 20  collections_12_mths_ex_med      1345254 non-null  float64
+ 21  acc_now_delinq                  1345310 non-null  float64
+ 22  tot_coll_amt                    1277783 non-null  float64
+ 23  open_act_il                     537598 non-null   float64
+ 24  total_bal_il                    537598 non-null   float64
+ 25  open_rv_12m                     537598 non-null   float64
+ 26  max_bal_bc                      537598 non-null   float64
+ 27  all_util                        537545 non-null   float64
+ 28  acc_open_past_24mths            1298029 non-null  float64
+ 29  bc_util                         1283398 non-null  float64
+ 30  chargeoff_within_12_mths        1345254 non-null  float64
+ 31  delinq_amnt                     1345310 non-null  float64
+ 32  mort_acc                        1298029 non-null  float64
+ 33  mths_since_recent_bc            1345310 non-null  float64
+ 34  mths_since_recent_inq           1345310 non-null  float64
+ 35  mths_since_recent_revol_delinq  1345310 non-null  float64
+ 36  num_bc_sats                     1289469 non-null  float64
+ 37  num_sats                        1289469 non-null  float64
+ 38  num_tl_120dpd_2m                1227909 non-null  float64
+ 39  num_tl_90g_dpd_24m              1277783 non-null  float64
+ 40  num_tl_op_past_12m              1277783 non-null  float64
+ 41  pct_tl_nvr_dlq                  1277629 non-null  float64
+ 42  pub_rec_bankruptcies            1344613 non-null  float64
+ 43  tax_liens                       1345271 non-null  float64
+ 44  tot_hi_cred_lim                 1277783 non-null  float64
+ 45  default                         1345310 non-null  int64  
+ 46  has_payment_plan                1345310 non-null  int64  
+ 47  had_hardship                    1345310 non-null  int64  
+ 48  had_settlement                  1345310 non-null  int64  
+ 49  term_num                        1345310 non-null  int64  
+ 50  initial_list_status_num         1345310 non-null  int64  
+ 51  application_type_num            1345310 non-null  int64  
+ 52  disbursement_method_num         1345310 non-null  int64  
+ 53  verification_status_num         1345310 non-null  int64  
+ 54  fico_range_mean                 1345310 non-null  float64
+ 55  last_fico_range_mean            1345310 non-null  float64
+ 56  sub_grade_num                   1345310 non-null  int64  
+ 57  issue_d_year                    1345310 non-null  int32  
+ 58  earliest_cr_line_year           1345310 non-null  int32  
+ 59  issue_d_month                   1345310 non-null  int32  
+ 60  earliest_cr_line_month          1345310 non-null  int32  
+ 61  emp_length_num                  1345310 non-null  int64  
+ 62  payment_effiency                1344466 non-null  float64
+ 63  loan_gap                        1345310 non-null  float64
+dtypes: float64(46), int32(4), int64(11), object(3)
+memory usage: 646.6+ MB
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">df</span><span class="o">.</span><span class="n">to_csv</span><span class="p">(</span><span class="s2">&quot;data_lend.csv&quot;</span><span class="p">,</span> <span class="n">index</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+</section>
+</section>
+</section>
+</section>
+
+    <script type="text/x-thebe-config">
+    {
+        requestKernel: true,
+        binderOptions: {
+            repo: "binder-examples/jupyter-stacks-datascience",
+            ref: "master",
+        },
+        codeMirrorConfig: {
+            theme: "abcdef",
+            mode: "python"
+        },
+        kernelOptions: {
+            name: "python3",
+            path: "./."
+        },
+        predefinedOutput: true
+    }
+    </script>
+    <script>kernelName = 'python3'</script>
+
+                </article>
+              
+
+              
+              
+              
+              
+                <footer class="prev-next-footer d-print-none">
+                  
+<div class="prev-next-area">
+    <a class="left-prev"
+       href="EDA.html"
+       title="previous page">
+      <i class="fa-solid fa-angle-left"></i>
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">previous</p>
+        <p class="prev-next-title"><strong>Análisis exploratorio de datos</strong></p>
+      </div>
+    </a>
+    <a class="right-next"
+       href="scklearn.html"
+       title="next page">
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">next</p>
+        <p class="prev-next-title">Modelo con sklearn</p>
+      </div>
+      <i class="fa-solid fa-angle-right"></i>
+    </a>
+</div>
+                </footer>
+              
+            </div>
+            
+            
+              
+                <div class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
+
+
+  <div class="sidebar-secondary-item">
+  <div class="page-toc tocsection onthispage">
+    <i class="fa-solid fa-list"></i> Contents
+  </div>
+  <nav class="bd-toc-nav page-toc">
+    <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#reduccion-del-dataset-a-la-variable-objetivo"><strong>Reducción del dataset a la variable objetivo</strong></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#tratamiento-de-variables"><strong>Tratamiento de variables</strong></a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#transformacion-y-agregacion"><em>Transformación y agregación</em></a><ul class="nav section-nav flex-column">
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#codificacion-dummy"><strong>Codificación Dummy</strong></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#variables-de-inversor"><strong>Variables de inversor</strong></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#variables-low-y-high"><strong>Variables _low y _high</strong></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#variable-dti">Variable DTI</a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#variables-tipo-objeto"><strong>Variables tipo objeto</strong></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#tipo-fecha"><strong>Tipo fecha</strong></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#variables-de-frecuencia-de-tiempo"><strong>Variables de frecuencia de tiempo</strong></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#creacion-de-variables-representativas">creacion de variables representativas</a></li>
+</ul>
+</li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#eliminacion-de-variables-identificadoras"><em>Eliminación de variables identificadoras</em></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#valores-nulos"><em>Valores nulos</em></a><ul class="nav section-nav flex-column">
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#variables-con-mas-del-70-de-datos-perdidos"><strong>Variables con más del 70% de datos perdidos</strong></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#variables-meses-desde"><strong>Variables meses desde</strong></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#variables-con-mas-del-50-de-datos-perdidos"><strong>Variables con más del 50% de datos perdidos</strong></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#agrupacion-de-variables-por-caracteristicas"><strong>Agrupación de variables por características</strong></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#variables-restantes-con-valores-nulos"><strong>Variables restantes con valores nulos</strong></a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+  </nav></div>
+
+</div></div>
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+<div class="bd-footer-content__inner container">
+  
+  <div class="footer-item">
+    
+<p class="component-author">
+By Daniella Guerra
+</p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+
+  <p class="copyright">
+    
+      © Copyright 2023.
+      <br/>
+    
+  </p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+</div>
+          </footer>
+        
+
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script src="_static/scripts/bootstrap.js?digest=dfe6caa3a7d634c4db9b"></script>
+<script src="_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b"></script>
+
+  <footer class="bd-footer">
+  </footer>
+  </body>
+</html>
