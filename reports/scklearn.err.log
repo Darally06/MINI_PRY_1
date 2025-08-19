@@ -22,38 +22,38 @@ Traceback (most recent call last):
     raise CellExecutionError.from_cell_and_msg(cell, exec_reply_content)
 nbclient.exceptions.CellExecutionError: An error occurred while executing the following cell:
 ------------------
-# Crear figura con 1 fila y 4 columnas
-fig, axes = plt.subplots(1, 4, figsize=(20, 5))  
+# VIF
 
-for i, var in enumerate(variables):
-    tabla = df[var].value_counts().reset_index()
-    tabla.columns = [var, "Count"]
-    
-    # Reemplazar valores con binary_maps
-    tabla[var] = tabla[var].map(binary_maps[var])
-    
-    # Gráfico
-    axes[i].bar(tabla[var], tabla["Count"], color="skyblue", edgecolor="black")
-    axes[i].set_title(var_names[var], fontsize=12, fontweight="bold")
-    axes[i].set_ylabel("Frecuencia")
-    axes[i].set_xlabel("Categoría")
-    axes[i].tick_params(axis='x', rotation=0)  # rotar etiquetas
+# 1️⃣ Selecciona solo variables numéricas (excluyendo la variable objetivo 'default')
+num_cols = df.select_dtypes(include=['float64', 'int64']).columns.tolist()
+num_cols.remove('default')  # excluimos la variable objetivo
 
-# Ajustar espacios
-plt.tight_layout()
-plt.show()
+# 2️⃣ Opcional: si tienes variables altamente correlacionadas entre sí, puedes eliminar algunas para no inflar el VIF
+num_cols.remove('cuota_mensual')
+num_cols.remove('uso_tarjetas_credito')
+num_cols.remove('meses_ultima_mora')
 
+# 3️⃣ Prepara la matriz con constante
+X = add_constant(df[num_cols])
+
+# 4️⃣ Calcula VIF para cada variable
+vif_data = pd.DataFrame()
+vif_data['Variable'] = X.columns
+vif_data['VIF'] = [variance_inflation_factor(X.values, i) for i in range(X.shape[1])]
+
+# 5️⃣ Ordena por VIF descendente
+print(vif_data[vif_data['VIF'] > 2].sort_values(by='VIF', ascending=False))
 ------------------
 
 
 [1;31m---------------------------------------------------------------------------[0m
 [1;31mNameError[0m                                 Traceback (most recent call last)
-Cell [1;32mIn[19], line 13[0m
-[0;32m     11[0m [38;5;66;03m# Gráfico[39;00m
-[0;32m     12[0m axes[i][38;5;241m.[39mbar(tabla[var], tabla[[38;5;124m"[39m[38;5;124mCount[39m[38;5;124m"[39m], color[38;5;241m=[39m[38;5;124m"[39m[38;5;124mskyblue[39m[38;5;124m"[39m, edgecolor[38;5;241m=[39m[38;5;124m"[39m[38;5;124mblack[39m[38;5;124m"[39m)
-[1;32m---> 13[0m axes[i][38;5;241m.[39mset_title([43mvar_names[49m[var], fontsize[38;5;241m=[39m[38;5;241m12[39m, fontweight[38;5;241m=[39m[38;5;124m"[39m[38;5;124mbold[39m[38;5;124m"[39m)
-[0;32m     14[0m axes[i][38;5;241m.[39mset_ylabel([38;5;124m"[39m[38;5;124mFrecuencia[39m[38;5;124m"[39m)
-[0;32m     15[0m axes[i][38;5;241m.[39mset_xlabel([38;5;124m"[39m[38;5;124mCategoría[39m[38;5;124m"[39m)
+Cell [1;32mIn[6], line 13[0m
+[0;32m     10[0m num_cols[38;5;241m.[39mremove([38;5;124m'[39m[38;5;124mmeses_ultima_mora[39m[38;5;124m'[39m)
+[0;32m     12[0m [38;5;66;03m# 3️⃣ Prepara la matriz con constante[39;00m
+[1;32m---> 13[0m X [38;5;241m=[39m [43madd_constant[49m(df[num_cols])
+[0;32m     15[0m [38;5;66;03m# 4️⃣ Calcula VIF para cada variable[39;00m
+[0;32m     16[0m vif_data [38;5;241m=[39m pd[38;5;241m.[39mDataFrame()
 
-[1;31mNameError[0m: name 'var_names' is not defined
+[1;31mNameError[0m: name 'add_constant' is not defined
 

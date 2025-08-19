@@ -7,7 +7,7 @@ El dataset usado está disponible en: [], el cual reúne los registros históric
 
 ## **Leadind Club**
 
-* Definicipn de la empresa
+* Definición de la empresa
 
 ```{tableofcontents}
 ```
