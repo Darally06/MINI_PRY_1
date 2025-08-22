@@ -3,7 +3,8 @@
 format: jb-book
 root: intro
 chapters:
-- file: EDA
 - file: manejo_dataraw
+- file: EDA
+- file: variables_interes
 - file: scklearn
 

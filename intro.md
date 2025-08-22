@@ -2,12 +2,16 @@
 
 Este sample book presenta la implementación de un modelo de red neuronal multicapa, el cual tiene el objetivo de predecir si un préstamo será un default o pagado en su totalidad. 
 
-El dataset usado está disponible en: [], el cual reúne los registros históricos de la empresa Lending Club del año 2007 - 2018. 
+El dataset reúne los registros históricos de la empresa Lending Club. 
 
 
-## **Leadind Club**
+## **Leading Club**
 
-* Definición de la empresa
+Es una compañía estadounidense de préstamo entre particulares, con sede en San Francisco (California). 
+
+Lending club permite a sus prestatarios crear listas de préstamos en su página web aportando datos de ellos mismos y de los préstamos que les gustaría obtener. Todos los préstamos son préstamos a particulares no asegurados que pueden rondar entre 1.000 y 35.000 dólares. En función de la puntuación de crédito del prestatario, el historial de crédito, de la cantidad solicitada y del ratio entre ingresos y gastos del prestatario, Lending Club determina si el prestatario es digno de confianza y asigna a los préstamos que son aprobados un grado de crédito que determina la tasas y el tipo de interés a pagar. 
+
+
 
 ```{tableofcontents}
 ```

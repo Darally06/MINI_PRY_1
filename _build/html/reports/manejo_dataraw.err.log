@@ -16,24 +16,19 @@ Traceback (most recent call last):
     return future.result()
   File "C:\Users\Hp\anaconda3\envs\MACHINE\lib\site-packages\nbclient\client.py", line 709, in async_execute
     await self.async_execute_cell(
-  File "C:\Users\Hp\anaconda3\envs\MACHINE\lib\site-packages\nbclient\client.py", line 1062, in async_execute_cell
-    await self._check_raise_for_error(cell, cell_index, exec_reply)
-  File "C:\Users\Hp\anaconda3\envs\MACHINE\lib\site-packages\nbclient\client.py", line 918, in _check_raise_for_error
-    raise CellExecutionError.from_cell_and_msg(cell, exec_reply_content)
-nbclient.exceptions.CellExecutionError: An error occurred while executing the following cell:
-------------------
-import tensorflow as tf
-
-print("GPU disponible:", tf.config.list_physical_devices('GPU'))
-
-------------------
-
-
-[1;31m---------------------------------------------------------------------------[0m
-[1;31mModuleNotFoundError[0m                       Traceback (most recent call last)
-Cell [1;32mIn[2], line 1[0m
-[1;32m----> 1[0m [38;5;28;01mimport[39;00m[38;5;250m [39m[38;5;21;01mtensorflow[39;00m[38;5;250m [39m[38;5;28;01mas[39;00m[38;5;250m [39m[38;5;21;01mtf[39;00m
-[0;32m      3[0m [38;5;28mprint[39m([38;5;124m"[39m[38;5;124mGPU disponible:[39m[38;5;124m"[39m, tf[38;5;241m.[39mconfig[38;5;241m.[39mlist_physical_devices([38;5;124m'[39m[38;5;124mGPU[39m[38;5;124m'[39m))
-
-[1;31mModuleNotFoundError[0m: No module named 'tensorflow'
+  File "C:\Users\Hp\anaconda3\envs\MACHINE\lib\site-packages\nbclient\client.py", line 1005, in async_execute_cell
+    exec_reply = await self.task_poll_for_reply
+  File "C:\Users\Hp\anaconda3\envs\MACHINE\lib\site-packages\nbclient\client.py", line 806, in _async_poll_for_reply
+    error_on_timeout_execute_reply = await self._async_handle_timeout(timeout, cell)
+  File "C:\Users\Hp\anaconda3\envs\MACHINE\lib\site-packages\nbclient\client.py", line 856, in _async_handle_timeout
+    raise CellTimeoutError.error_from_timeout_and_cell(
+nbclient.exceptions.CellTimeoutError: A cell timed out while it was being executed, after 30 seconds.
+The message was: Cell execution timed out.
+Here is a preview of the cell contents:
+-------------------
+# Lectura del dataset original
+file = r"C:\Users\Hp\Downloads\accepted_2007_to_2018Q4.csv\accepted_2007_to_2018Q4.csv"
+df = pd.read_csv(file, low_memory=False)
+print("Dimensiones del DataFrame original:", df.shape)
+-------------------
 

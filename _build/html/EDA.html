@@ -57,11 +57,13 @@
     <script async="async" src="_static/sphinx-thebe.js?v=c100c467"></script>
     <script>var togglebuttonSelector = '.toggle, .admonition.dropdown';</script>
     <script>const THEBE_JS_URL = "https://unpkg.com/thebe@0.8.2/lib/index.js"; const thebe_selector = ".thebe,.cell"; const thebe_selector_input = "pre"; const thebe_selector_output = ".output, .cell_output"</script>
+    <script>window.MathJax = {"options": {"processHtmlClass": "tex2jax_process|mathjax_process|math|output_area"}}</script>
+    <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
     <script>DOCUMENTATION_OPTIONS.pagename = 'EDA';</script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
-    <link rel="next" title="Preprocesamiento de datos" href="manejo_dataraw.html" />
-    <link rel="prev" title="Predicción de prestamos DEFAULT" href="intro.html" />
+    <link rel="next" title="Selección de variables de interés" href="variables_interes.html" />
+    <link rel="prev" title="Preprocesamiento de datos" href="manejo_dataraw.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
   </head>
@@ -174,11 +176,10 @@
             </li>
         </ul>
         <ul class="current nav bd-sidenav">
-<li class="toctree-l1 current active"><a class="current reference internal" href="#"><strong>Análisis exploratorio de datos</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="manejo_dataraw.html"><strong>Preprocesamiento de datos</strong></a></li>
-<li class="toctree-l1"><a class="reference internal" href="scklearn.html">Modelo con sklearn</a></li>
-
-
+<li class="toctree-l1 current active"><a class="current reference internal" href="#"><strong>Análisis exploratorio de datos</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="variables_interes.html"><strong>Selección de variables de interés</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="scklearn.html"><strong>Modelo MLP con <code class="docutils literal notranslate"><span class="pre">sklearn</span></code></strong></a></li>
 </ul>
 
     </div>
@@ -374,15 +375,20 @@ document.write(`
             </div>
             <nav aria-label="Page">
                 <ul class="visible nav section-nav flex-column">
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#dataset"><strong>1. Dataset</strong></a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#distribucion-de-las-variables-de-estudio"><strong>2. Distribución de las variables de estudio</strong></a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#variable-objetivo">2.1. Variable objetivo</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#valores-faltantes">2.2. Valores faltantes</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#correlacion-de-variables">2.3. Correlación de variables</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#correlacion-de-variables">2.3. Correlación de variables</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#variables-numericas">Variables numéricas</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#variables-categoricas">Variables categóricas</a></li>
+</ul>
+</li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#analisis-por-grupos">2.4 Análisis por grupos</a><ul class="nav section-nav flex-column">
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#informacion-del-prestamo">Información del prestamo</a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#informacion-del-prestadiario">Información del prestadiario</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#informacion-del-prestatario">Información del prestatario</a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#historial-crediticio">Historial crediticio</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#morosidad">Morosidad</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#tecnicas-de-control"><strong>Técnicas de control</strong></a></li>
 </ul>
 </li>
 </ul>
@@ -398,172 +404,18 @@ document.write(`
                   
   <section class="tex2jax_ignore mathjax_ignore" id="analisis-exploratorio-de-datos">
 <h1><strong>Análisis exploratorio de datos</strong><a class="headerlink" href="#analisis-exploratorio-de-datos" title="Link to this heading">#</a></h1>
-<section id="dataset">
-<h2><strong>1. Dataset</strong><a class="headerlink" href="#dataset" title="Link to this heading">#</a></h2>
+<p><strong>Dataset</strong></p>
 <p>➡️  <strong>Nombre:</strong> Lending Club Loan Data (2007–2020) <br />
 ➡️  <strong>Fuente:</strong> Kaggle Dataset - Lending Club <br />
 ➡️  <strong>Tamaño:</strong> 2’260.701 registros en 151 variables de estudio</p>
-<div class="cell docutils container">
-<div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">scipy.stats</span><span class="w"> </span><span class="kn">import</span> <span class="n">chi2_contingency</span>
-</pre></div>
-</div>
-</div>
-</div>
-<div class="cell docutils container">
-<div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">df</span><span class="o">.</span><span class="n">drop</span><span class="p">(</span><span class="n">columns</span> <span class="o">=</span><span class="p">[</span><span class="s1">&#39;total_pymnt&#39;</span><span class="p">,</span> <span class="s1">&#39;total_rec_prncp&#39;</span><span class="p">,</span> <span class="s1">&#39;total_rec_int&#39;</span><span class="p">,</span> <span class="s1">&#39;total_rec_late_fee&#39;</span><span class="p">,</span>
-                  <span class="s1">&#39;recoveries&#39;</span><span class="p">,</span> <span class="s1">&#39;last_pymnt_amnt&#39;</span><span class="p">,</span> <span class="s1">&#39;last_fico_range_mean&#39;</span><span class="p">,</span>
-                  <span class="s1">&#39;payment_effiency&#39;</span><span class="p">,</span> <span class="s1">&#39;has_payment_plan&#39;</span><span class="p">,</span> <span class="s1">&#39;had_hardship&#39;</span><span class="p">,</span> <span class="s1">&#39;out_prncp&#39;</span><span class="p">,</span>
-                  <span class="s1">&#39;tax_liens&#39;</span><span class="p">,</span> <span class="s1">&#39;all_util&#39;</span><span class="p">,</span> <span class="s1">&#39;open_rv_12m&#39;</span><span class="p">,</span> <span class="s1">&#39;open_act_il&#39;</span><span class="p">,</span> <span class="s1">&#39;max_bal_bc&#39;</span><span class="p">,</span> <span class="s1">&#39;total_bal_il&#39;</span><span class="p">,</span>
-                  <span class="s1">&#39;acc_open_past_24mths&#39;</span>
-                  <span class="p">],</span> <span class="n">inplace</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-</pre></div>
-</div>
-</div>
-</div>
-<div class="cell docutils container">
-<div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># Renombrar variables</span>
-<span class="n">variable_dict</span> <span class="o">=</span> <span class="p">{</span>
-    <span class="s2">&quot;prestamo&quot;</span><span class="p">:</span> <span class="p">{</span>
-        <span class="s2">&quot;funded_amnt&quot;</span><span class="p">:</span> <span class="s2">&quot;monto_aprobado&quot;</span><span class="p">,</span>
-        <span class="s2">&quot;int_rate&quot;</span><span class="p">:</span> <span class="s2">&quot;tasa_interes&quot;</span><span class="p">,</span>
-        <span class="s2">&quot;installment&quot;</span><span class="p">:</span> <span class="s2">&quot;cuota_mensual&quot;</span><span class="p">,</span>
-        <span class="s2">&quot;term_num&quot;</span><span class="p">:</span> <span class="s2">&quot;plazo_meses&quot;</span><span class="p">,</span>
-        <span class="s2">&quot;purpose&quot;</span><span class="p">:</span> <span class="s2">&quot;motivo_prestamo&quot;</span><span class="p">,</span>
-        <span class="s2">&quot;disbursement_method_num&quot;</span><span class="p">:</span> <span class="s2">&quot;metodo_desembolso&quot;</span><span class="p">,</span>
-        <span class="s2">&quot;initial_list_status_num&quot;</span><span class="p">:</span> <span class="s2">&quot;estado_inicial_listado&quot;</span><span class="p">,</span>
-        <span class="s2">&quot;application_type_num&quot;</span><span class="p">:</span> <span class="s2">&quot;tipo_aplicacion&quot;</span><span class="p">,</span>
-        <span class="s2">&quot;loan_gap&quot;</span><span class="p">:</span> <span class="s2">&quot;dif_monto_solicitado&quot;</span>
-    <span class="p">},</span>
-    <span class="s2">&quot;prestatario&quot;</span><span class="p">:</span> <span class="p">{</span>
-        <span class="s2">&quot;annual_inc&quot;</span><span class="p">:</span> <span class="s2">&quot;ingreso_anual&quot;</span><span class="p">,</span>
-        <span class="s2">&quot;home_ownership&quot;</span><span class="p">:</span> <span class="s2">&quot;tipo_vivienda&quot;</span><span class="p">,</span>
-        <span class="s2">&quot;emp_length_num&quot;</span><span class="p">:</span> <span class="s2">&quot;antiguedad_laboral&quot;</span><span class="p">,</span>
-        <span class="s2">&quot;verification_status_num&quot;</span><span class="p">:</span> <span class="s2">&quot;estado_verif_ingreso&quot;</span>
-    <span class="p">},</span>
-    <span class="s2">&quot;historial_crediticio&quot;</span><span class="p">:</span> <span class="p">{</span>
-        <span class="s2">&quot;fico_range_mean&quot;</span><span class="p">:</span> <span class="s2">&quot;promedio_fico&quot;</span><span class="p">,</span>
-        <span class="s2">&quot;earliest_cr_line_year&quot;</span><span class="p">:</span> <span class="s2">&quot;año_apertura_credito&quot;</span><span class="p">,</span>
-        <span class="s2">&quot;earliest_cr_line_month&quot;</span><span class="p">:</span> <span class="s2">&quot;mes_apertura_credito&quot;</span><span class="p">,</span>
-        <span class="s2">&quot;mort_acc&quot;</span><span class="p">:</span> <span class="s2">&quot;cuentas_hipotecarias&quot;</span><span class="p">,</span>
-        <span class="s2">&quot;total_acc&quot;</span><span class="p">:</span> <span class="s2">&quot;total_cuentas_credito&quot;</span><span class="p">,</span>
-        <span class="s2">&quot;num_sats&quot;</span><span class="p">:</span> <span class="s2">&quot;cuentas_abiertas&quot;</span><span class="p">,</span>
-        <span class="s2">&quot;num_bc_sats&quot;</span><span class="p">:</span> <span class="s2">&quot;cuentas_tarjeta_credito&quot;</span><span class="p">,</span>
-        <span class="s2">&quot;revol_bal&quot;</span><span class="p">:</span> <span class="s2">&quot;saldo_revolvente&quot;</span><span class="p">,</span>
-        <span class="s2">&quot;revol_util&quot;</span><span class="p">:</span> <span class="s2">&quot;uso_credito_revolvente&quot;</span><span class="p">,</span>
-        <span class="s2">&quot;bc_util&quot;</span><span class="p">:</span> <span class="s2">&quot;uso_tarjetas_credito&quot;</span><span class="p">,</span>
-        <span class="s2">&quot;tot_hi_cred_lim&quot;</span><span class="p">:</span> <span class="s2">&quot;limite_credito_total&quot;</span>
-    <span class="p">},</span>
-    <span class="s2">&quot;comportamiento_prestatario&quot;</span><span class="p">:</span> <span class="p">{</span>
-        <span class="s2">&quot;mths_since_recent_inq&quot;</span><span class="p">:</span> <span class="s2">&quot;meses_ultima_consulta&quot;</span><span class="p">,</span>
-        <span class="s2">&quot;mths_since_recent_bc&quot;</span><span class="p">:</span> <span class="s2">&quot;meses_tarjeta_nueva&quot;</span><span class="p">,</span>
-        <span class="s2">&quot;mths_since_recent_revol_delinq&quot;</span><span class="p">:</span> <span class="s2">&quot;meses_mora_revolvente&quot;</span><span class="p">,</span>
-        <span class="s2">&quot;num_tl_op_past_12m&quot;</span><span class="p">:</span> <span class="s2">&quot;lineas_credito_12m&quot;</span><span class="p">,</span>
-        <span class="s2">&quot;pct_tl_nvr_dlq&quot;</span><span class="p">:</span> <span class="s2">&quot;porcentaje_sin_moras&quot;</span>
-    <span class="p">},</span>
-    <span class="s2">&quot;morosidad_riesgo&quot;</span><span class="p">:</span> <span class="p">{</span>
-        <span class="s2">&quot;delinq_2yrs&quot;</span><span class="p">:</span> <span class="s2">&quot;moras_2_year&quot;</span><span class="p">,</span>
-        <span class="s2">&quot;mths_since_last_delinq&quot;</span><span class="p">:</span> <span class="s2">&quot;meses_ultima_mora&quot;</span><span class="p">,</span>
-        <span class="s2">&quot;delinq_amnt&quot;</span><span class="p">:</span> <span class="s2">&quot;monto_mora&quot;</span><span class="p">,</span>
-        <span class="s2">&quot;num_tl_90g_dpd_24m&quot;</span><span class="p">:</span> <span class="s2">&quot;lineas_90_dias_mora_24m&quot;</span><span class="p">,</span>
-        <span class="s2">&quot;num_tl_120dpd_2m&quot;</span><span class="p">:</span> <span class="s2">&quot;lineas_120_dias_mora_2m&quot;</span><span class="p">,</span>
-        <span class="s2">&quot;chargeoff_within_12_mths&quot;</span><span class="p">:</span> <span class="s2">&quot;castigos_12m&quot;</span><span class="p">,</span>
-        <span class="s2">&quot;collections_12_mths_ex_med&quot;</span><span class="p">:</span> <span class="s2">&quot;cobranzas_12m&quot;</span><span class="p">,</span>
-        <span class="s2">&quot;acc_now_delinq&quot;</span><span class="p">:</span> <span class="s2">&quot;cuentas_en_mora_actual&quot;</span><span class="p">,</span>
-        <span class="s2">&quot;tot_coll_amt&quot;</span><span class="p">:</span> <span class="s2">&quot;monto_total_cobranzas&quot;</span><span class="p">,</span>
-        <span class="s2">&quot;pub_rec_bankruptcies&quot;</span><span class="p">:</span> <span class="s2">&quot;quiebras_publicas&quot;</span><span class="p">,</span>
-        <span class="s2">&quot;had_settlement&quot;</span><span class="p">:</span> <span class="s2">&quot;tuvo_acuerdo_pago&quot;</span>
-    <span class="p">},</span>
-    <span class="s2">&quot;tecnicas_control&quot;</span><span class="p">:</span> <span class="p">{</span>
-        <span class="s2">&quot;grade&quot;</span><span class="p">:</span> <span class="s2">&quot;categoria_credito&quot;</span><span class="p">,</span>
-        <span class="s2">&quot;sub_grade_num&quot;</span><span class="p">:</span> <span class="s2">&quot;subcategoria_credito&quot;</span><span class="p">,</span>
-        <span class="s2">&quot;issue_d_year&quot;</span><span class="p">:</span> <span class="s2">&quot;año_emision_prestamo&quot;</span><span class="p">,</span>
-        <span class="s2">&quot;issue_d_month&quot;</span><span class="p">:</span> <span class="s2">&quot;mes_emision_prestamo&quot;</span>
-    <span class="p">}</span>
-<span class="p">}</span>
-</pre></div>
-</div>
-</div>
-</div>
-<div class="cell docutils container">
-<div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># Combinar todos los subdiccionarios en uno solo</span>
-<span class="n">rename_map</span> <span class="o">=</span> <span class="p">{</span><span class="n">k</span><span class="p">:</span> <span class="n">v</span> <span class="k">for</span> <span class="n">group</span> <span class="ow">in</span> <span class="n">variable_dict</span><span class="o">.</span><span class="n">values</span><span class="p">()</span> <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">group</span><span class="o">.</span><span class="n">items</span><span class="p">()}</span>
-<span class="c1"># Renombrar columnas</span>
-<span class="n">df</span><span class="o">.</span><span class="n">rename</span><span class="p">(</span><span class="n">columns</span><span class="o">=</span><span class="n">rename_map</span><span class="p">,</span> <span class="n">inplace</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-</pre></div>
-</div>
-</div>
-</div>
-<div class="cell docutils container">
-<div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">df</span><span class="o">.</span><span class="n">info</span><span class="p">()</span>
-</pre></div>
-</div>
-</div>
+<div class="cell tag_remove-input docutils container">
 <div class="cell_output docutils container">
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>&lt;class &#39;pandas.core.frame.DataFrame&#39;&gt;
-RangeIndex: 1345310 entries, 0 to 1345309
-Data columns (total 46 columns):
- #   Column                   Non-Null Count    Dtype  
----  ------                   --------------    -----  
- 0   monto_aprobado           1345310 non-null  float64
- 1   tasa_interes             1345310 non-null  float64
- 2   cuota_mensual            1345310 non-null  float64
- 3   categoria_credito        1345310 non-null  object 
- 4   tipo_vivienda            1345310 non-null  object 
- 5   ingreso_anual            1345310 non-null  float64
- 6   motivo_prestamo          1345310 non-null  object 
- 7   dti                      1344401 non-null  float64
- 8   moras_2_year             1345310 non-null  float64
- 9   meses_ultima_mora        1345310 non-null  float64
- 10  saldo_revolvente         1345310 non-null  float64
- 11  uso_credito_revolvente   1344453 non-null  float64
- 12  total_cuentas_credito    1345310 non-null  float64
- 13  cobranzas_12m            1345254 non-null  float64
- 14  cuentas_en_mora_actual   1345310 non-null  float64
- 15  monto_total_cobranzas    1277783 non-null  float64
- 16  uso_tarjetas_credito     1283398 non-null  float64
- 17  castigos_12m             1345254 non-null  float64
- 18  monto_mora               1345310 non-null  float64
- 19  cuentas_hipotecarias     1298029 non-null  float64
- 20  meses_tarjeta_nueva      1345310 non-null  float64
- 21  meses_ultima_consulta    1345310 non-null  float64
- 22  meses_mora_revolvente    1345310 non-null  float64
- 23  cuentas_tarjeta_credito  1289469 non-null  float64
- 24  cuentas_abiertas         1289469 non-null  float64
- 25  lineas_120_dias_mora_2m  1227909 non-null  float64
- 26  lineas_90_dias_mora_24m  1277783 non-null  float64
- 27  lineas_credito_12m       1277783 non-null  float64
- 28  porcentaje_sin_moras     1277629 non-null  float64
- 29  quiebras_publicas        1344613 non-null  float64
- 30  limite_credito_total     1277783 non-null  float64
- 31  default                  1345310 non-null  int64  
- 32  tuvo_acuerdo_pago        1345310 non-null  int64  
- 33  plazo_meses              1345310 non-null  int64  
- 34  estado_inicial_listado   1345310 non-null  int64  
- 35  tipo_aplicacion          1345310 non-null  int64  
- 36  metodo_desembolso        1345310 non-null  int64  
- 37  estado_verif_ingreso     1345310 non-null  int64  
- 38  promedio_fico            1345310 non-null  float64
- 39  subcategoria_credito     1345310 non-null  int64  
- 40  año_emision_prestamo     1345310 non-null  int64  
- 41  año_apertura_credito     1345310 non-null  int64  
- 42  mes_emision_prestamo     1345310 non-null  int64  
- 43  mes_apertura_credito     1345310 non-null  int64  
- 44  antiguedad_laboral       1345310 non-null  int64  
- 45  dif_monto_solicitado     1345310 non-null  float64
-dtypes: float64(30), int64(13), object(3)
-memory usage: 472.1+ MB
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Dimensiones del dataset: (1345310, 40)
 </pre></div>
 </div>
 </div>
 </div>
-<p>📍  Se trabajarán <em>1’345.310</em> de registros que, luego de un proceso de preprocesamiento, se han resumido en <em>59</em> variables de interés. <br />
-📍  De las variables, 56 son de tipo numérico y 3 de tipo String</p>
-</section>
+<p>📍  Se trabajarán <span class="math notranslate nohighlight">\(1'345.310\)</span> de registros que, luego de un proceso de preprocesamiento, se han resumido en <span class="math notranslate nohighlight">\(40\)</span> variables de interés.</p>
 <section id="distribucion-de-las-variables-de-estudio">
 <h2><strong>2. Distribución de las variables de estudio</strong><a class="headerlink" href="#distribucion-de-las-variables-de-estudio" title="Link to this heading">#</a></h2>
 </section>
@@ -582,23 +434,7 @@ memory usage: 472.1+ MB
 </div>
 </div>
 </div>
-<div class="cell docutils container">
-<div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># Calcular conteo absoluto y porcentual</span>
-<span class="n">abs_counts</span> <span class="o">=</span> <span class="n">target</span><span class="o">.</span><span class="n">value_counts</span><span class="p">()</span>
-<span class="n">pct_counts</span> <span class="o">=</span> <span class="n">target</span><span class="o">.</span><span class="n">value_counts</span><span class="p">(</span><span class="n">normalize</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span> <span class="o">*</span> <span class="mi">100</span>
-<span class="c1"># Combinar en una sola tabla</span>
-<span class="n">table</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">({</span>
-    <span class="s1">&#39;Default&#39;</span><span class="p">:</span> <span class="n">abs_counts</span><span class="o">.</span><span class="n">index</span><span class="o">.</span><span class="n">map</span><span class="p">({</span><span class="mi">0</span><span class="p">:</span> <span class="s1">&#39;Fully Paid&#39;</span><span class="p">,</span> <span class="mi">1</span><span class="p">:</span> <span class="s1">&#39;Charged Off&#39;</span><span class="p">}),</span>
-    <span class="s1">&#39;Count&#39;</span><span class="p">:</span> <span class="n">abs_counts</span><span class="o">.</span><span class="n">values</span><span class="p">,</span>
-    <span class="s1">&#39;Percentage&#39;</span><span class="p">:</span> <span class="n">pct_counts</span><span class="o">.</span><span class="n">values</span>
-<span class="p">})</span>
-<span class="c1"># Formatear porcentaje como string con símbolo %</span>
-<span class="n">table</span><span class="p">[</span><span class="s1">&#39;Percentage&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">table</span><span class="p">[</span><span class="s1">&#39;Percentage&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">round</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">str</span><span class="p">)</span> <span class="o">+</span> <span class="s1">&#39;%&#39;</span>
-<span class="n">table</span>
-</pre></div>
-</div>
-</div>
+<div class="cell tag_remove-input docutils container">
 <div class="cell_output docutils container">
 <div class="output text_html"><div>
 <style scoped>
@@ -640,62 +476,13 @@ memory usage: 472.1+ MB
 </table>
 </div></div></div>
 </div>
-<div class="cell docutils container">
-<div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1">#Distribución de la variable objetivo</span>
-<span class="n">labels</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;Fully Paid&#39;</span><span class="p">,</span> <span class="s1">&#39;Charged Off&#39;</span><span class="p">]</span>
-<span class="n">values</span> <span class="o">=</span> <span class="n">table</span><span class="p">[</span><span class="s1">&#39;Count&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">values</span>
-<span class="n">colors</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;#4caf50&#39;</span><span class="p">,</span> <span class="s1">&#39;#f44336&#39;</span><span class="p">]</span>
-
-<span class="n">fig</span> <span class="o">=</span> <span class="n">go</span><span class="o">.</span><span class="n">Figure</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="p">[</span><span class="n">go</span><span class="o">.</span><span class="n">Pie</span><span class="p">(</span>
-    <span class="n">labels</span><span class="o">=</span><span class="n">labels</span><span class="p">,</span>
-    <span class="n">values</span><span class="o">=</span><span class="n">values</span><span class="p">,</span>
-    <span class="n">marker</span><span class="o">=</span><span class="nb">dict</span><span class="p">(</span><span class="n">colors</span><span class="o">=</span><span class="n">colors</span><span class="p">),</span>
-    <span class="n">hole</span><span class="o">=</span><span class="mf">0.3</span><span class="p">,</span>  <span class="c1"># Dona</span>
-<span class="p">)])</span>
-<span class="n">fig</span><span class="o">.</span><span class="n">update_traces</span><span class="p">(</span>
-    <span class="n">textinfo</span><span class="o">=</span><span class="s1">&#39;percent+label&#39;</span><span class="p">,</span>
-    <span class="n">pull</span><span class="o">=</span><span class="p">[</span><span class="mf">0.05</span><span class="p">]</span><span class="o">*</span><span class="nb">len</span><span class="p">(</span><span class="n">labels</span><span class="p">),</span>
-    <span class="n">textfont</span><span class="o">=</span><span class="nb">dict</span><span class="p">(</span><span class="n">size</span><span class="o">=</span><span class="mi">14</span><span class="p">,</span> <span class="n">family</span><span class="o">=</span><span class="s1">&#39;Sans-serif&#39;</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s1">&#39;white&#39;</span><span class="p">),</span>
-<span class="p">)</span>
-<span class="n">fig</span><span class="o">.</span><span class="n">update_layout</span><span class="p">(</span>
-    <span class="n">legend_title_text</span><span class="o">=</span><span class="s1">&#39;Categoría&#39;</span><span class="p">,</span>
-    <span class="n">title</span><span class="o">=</span><span class="p">{</span>
-        <span class="s1">&#39;text&#39;</span><span class="p">:</span> <span class="s1">&#39;Distribución de la variable objetivo&#39;</span><span class="p">,</span>
-        <span class="s1">&#39;y&#39;</span><span class="p">:</span><span class="mf">0.95</span><span class="p">,</span>
-        <span class="s1">&#39;x&#39;</span><span class="p">:</span><span class="mf">0.5</span><span class="p">,</span>
-        <span class="s1">&#39;xanchor&#39;</span><span class="p">:</span> <span class="s1">&#39;center&#39;</span><span class="p">,</span>
-        <span class="s1">&#39;yanchor&#39;</span><span class="p">:</span> <span class="s1">&#39;top&#39;</span><span class="p">,</span>
-        <span class="s1">&#39;font&#39;</span><span class="p">:</span> <span class="nb">dict</span><span class="p">(</span><span class="n">size</span><span class="o">=</span><span class="mi">20</span><span class="p">,</span> <span class="n">family</span><span class="o">=</span><span class="s1">&#39;Sans-serif&#39;</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s1">&#39;black&#39;</span><span class="p">,</span> <span class="n">weight</span><span class="o">=</span><span class="s1">&#39;bold&#39;</span><span class="p">)</span>
-    <span class="p">},</span>
-    <span class="n">showlegend</span><span class="o">=</span><span class="kc">True</span>
-<span class="p">)</span>
-<span class="n">fig</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
-</pre></div>
-</div>
-</div>
+<div class="cell tag_remove-input docutils container">
 <div class="cell_output docutils container">
+<img alt="_images/1c8e8de4e22efaf0d024890cd006026932bb05890dceadde4fe0e178c25ef7f4.png" src="_images/1c8e8de4e22efaf0d024890cd006026932bb05890dceadde4fe0e178c25ef7f4.png" />
 </div>
 </div>
 <p>La distribución en la variable es 80% - 20%, siendo la mayoría de registros correspondientes a prestamos full pagados.</p>
-<div class="cell docutils container">
-<div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># Prueba de proporción </span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">statsmodels.stats.proportion</span><span class="w"> </span><span class="kn">import</span> <span class="n">proportions_ztest</span>
-
-<span class="n">count</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="s1">&#39;default&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span>        <span class="c1"># número de impagos</span>
-<span class="n">nobs</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>                 <span class="c1"># total de observaciones</span>
-<span class="n">value</span> <span class="o">=</span> <span class="mf">0.3</span>                       <span class="c1"># proporción hipotética</span>
-
-<span class="n">stat</span><span class="p">,</span> <span class="n">pval</span> <span class="o">=</span> <span class="n">proportions_ztest</span><span class="p">(</span><span class="n">count</span><span class="p">,</span> <span class="n">nobs</span><span class="p">,</span> <span class="n">value</span><span class="p">)</span>
-<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Prueba de hipótesis para la proporción hipotética del 30</span><span class="si">% e</span><span class="s2">sperado de impagos &quot;</span><span class="p">)</span>
-<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;z =&quot;</span><span class="p">,</span> <span class="n">stat</span><span class="p">,</span> <span class="s2">&quot;p-value =&quot;</span><span class="p">,</span> <span class="n">pval</span><span class="p">)</span>
-
-<span class="n">real_prop</span> <span class="o">=</span> <span class="n">count</span> <span class="o">/</span> <span class="n">nobs</span>
-<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Proporción observada: </span><span class="si">{</span><span class="n">real_prop</span><span class="si">:</span><span class="s2">.3f</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
-</pre></div>
-</div>
-</div>
+<div class="cell tag_remove-input docutils container">
 <div class="cell_output docutils container">
 <div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Prueba de hipótesis para la proporción hipotética del 30% esperado de impagos 
 z = -291.25730076462725 p-value = 0.0
@@ -706,30 +493,11 @@ Proporción observada: 0.200
 </div>
 <p>La proporción de impagos observada en los registros es del 20%, mientras que la proporción hipotética planteada fue del 50%.
 La diferencia entre ambas proporciones es estadísticamente significativa, como lo indica el p-valor ≈ 0, lo que permite rechazar la hipótesis nula.
-El estadístico z negativo confirma que la proporción observada está significativamente por debajo de la proporción hipotética</p>
+El estadístico z negativo confirma que la proporción observada está significativamente por debajo de la proporción hipotética.</p>
 </section>
 <section id="valores-faltantes">
 <h2>2.2. Valores faltantes<a class="headerlink" href="#valores-faltantes" title="Link to this heading">#</a></h2>
-<div class="cell docutils container">
-<div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># Resumen de valores faltantes</span>
-<span class="c1"># Missing map</span>
-
-<span class="c1"># Conteo y porcentaje de nulos</span>
-<span class="n">missing</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">isnull</span><span class="p">()</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span>
-<span class="n">missing_percent</span> <span class="o">=</span> <span class="p">(</span><span class="n">df</span><span class="o">.</span><span class="n">isnull</span><span class="p">()</span><span class="o">.</span><span class="n">mean</span><span class="p">()</span> <span class="o">*</span> <span class="mi">100</span><span class="p">)</span><span class="o">.</span><span class="n">round</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span>
-
-<span class="c1"># Tabla ordenada</span>
-<span class="n">missing_table</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">({</span>
-    <span class="s2">&quot;Nulos&quot;</span><span class="p">:</span> <span class="n">missing</span><span class="p">,</span>
-    <span class="s2">&quot;Porcentaje&quot;</span><span class="p">:</span> <span class="n">missing_percent</span>
-<span class="p">})</span>
-<span class="n">missing_table</span> <span class="o">=</span> <span class="n">missing_table</span><span class="p">[</span><span class="n">missing_table</span><span class="p">[</span><span class="s2">&quot;Nulos&quot;</span><span class="p">]</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">]</span> \
-    <span class="o">.</span><span class="n">sort_values</span><span class="p">(</span><span class="s2">&quot;Porcentaje&quot;</span><span class="p">,</span> <span class="n">ascending</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
-<span class="n">missing_table</span>
-</pre></div>
-</div>
-</div>
+<div class="cell tag_remove-input docutils container">
 <div class="cell_output docutils container">
 <div class="output text_html"><div>
 <style scoped>
@@ -755,9 +523,14 @@ El estadístico z negativo confirma que la proporción observada está significa
   </thead>
   <tbody>
     <tr>
-      <th>lineas_120_dias_mora_2m</th>
-      <td>117401</td>
-      <td>8.73</td>
+      <th>meses_ultima_consulta</th>
+      <td>174071</td>
+      <td>12.94</td>
+    </tr>
+    <tr>
+      <th>antiguedad_laboral</th>
+      <td>78511</td>
+      <td>5.84</td>
     </tr>
     <tr>
       <th>porcentaje_sin_moras</th>
@@ -766,12 +539,7 @@ El estadístico z negativo confirma que la proporción observada está significa
     </tr>
     <tr>
       <th>monto_total_cobranzas</th>
-      <td>67527</td>
-      <td>5.02</td>
-    </tr>
-    <tr>
-      <th>lineas_90_dias_mora_24m</th>
-      <td>67527</td>
+      <td>67561</td>
       <td>5.02</td>
     </tr>
     <tr>
@@ -785,9 +553,9 @@ El estadístico z negativo confirma que la proporción observada está significa
       <td>5.02</td>
     </tr>
     <tr>
-      <th>uso_tarjetas_credito</th>
-      <td>61912</td>
-      <td>4.60</td>
+      <th>meses_tarjeta_nueva</th>
+      <td>60221</td>
+      <td>4.48</td>
     </tr>
     <tr>
       <th>cuentas_tarjeta_credito</th>
@@ -795,19 +563,9 @@ El estadístico z negativo confirma que la proporción observada está significa
       <td>4.15</td>
     </tr>
     <tr>
-      <th>cuentas_abiertas</th>
-      <td>55841</td>
-      <td>4.15</td>
-    </tr>
-    <tr>
       <th>cuentas_hipotecarias</th>
       <td>47281</td>
       <td>3.51</td>
-    </tr>
-    <tr>
-      <th>dti</th>
-      <td>909</td>
-      <td>0.07</td>
     </tr>
     <tr>
       <th>uso_credito_revolvente</th>
@@ -820,57 +578,48 @@ El estadístico z negativo confirma que la proporción observada está significa
       <td>0.05</td>
     </tr>
     <tr>
-      <th>castigos_12m</th>
-      <td>56</td>
-      <td>0.00</td>
+      <th>dti</th>
+      <td>414</td>
+      <td>0.03</td>
     </tr>
     <tr>
       <th>cobranzas_12m</th>
       <td>56</td>
       <td>0.00</td>
     </tr>
+    <tr>
+      <th>castigos_12m</th>
+      <td>56</td>
+      <td>0.00</td>
+    </tr>
+    <tr>
+      <th>monto_mora</th>
+      <td>1</td>
+      <td>0.00</td>
+    </tr>
+    <tr>
+      <th>saldo_revolvente</th>
+      <td>40</td>
+      <td>0.00</td>
+    </tr>
   </tbody>
 </table>
 </div></div></div>
 </div>
+<p>Los valores de perdida son bajos, menores al 15%, se realiza la imputación por la mediana o por cero dependiendo la naturaleza de la variable.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># Listado de imputaciones</span>
-<span class="n">imputar_cero</span> <span class="o">=</span> <span class="p">[</span>
-    <span class="s2">&quot;lineas_120_dias_mora_2m&quot;</span><span class="p">,</span>
-    <span class="s2">&quot;lineas_90_dias_mora_24m&quot;</span><span class="p">,</span>
-    <span class="s2">&quot;monto_total_cobranzas&quot;</span><span class="p">,</span>
-    <span class="s2">&quot;quiebras_publicas&quot;</span><span class="p">,</span>
-    <span class="s2">&quot;cobranzas_12m&quot;</span><span class="p">,</span>
-    <span class="s2">&quot;castigos_12m&quot;</span><span class="p">,</span>
-    <span class="s2">&quot;cuentas_tarjeta_credito&quot;</span><span class="p">,</span>
-    <span class="s2">&quot;cuentas_abiertas&quot;</span><span class="p">,</span>
-    <span class="s2">&quot;cuentas_hipotecarias&quot;</span>
-<span class="p">]</span>
-<span class="n">imputar_mediana</span> <span class="o">=</span> <span class="p">[</span>
-    <span class="s2">&quot;porcentaje_sin_moras&quot;</span><span class="p">,</span>
-    <span class="s2">&quot;limite_credito_total&quot;</span><span class="p">,</span>
-    <span class="s2">&quot;lineas_credito_12m&quot;</span><span class="p">,</span>
-    <span class="s2">&quot;uso_tarjetas_credito&quot;</span><span class="p">,</span>
-    <span class="s2">&quot;dti&quot;</span><span class="p">,</span>
-    <span class="s2">&quot;uso_credito_revolvente&quot;</span>
-<span class="p">]</span>
-
-
-<span class="k">for</span> <span class="n">col</span> <span class="ow">in</span> <span class="n">imputar_cero</span><span class="p">:</span>
-    <span class="k">if</span> <span class="n">col</span> <span class="ow">in</span> <span class="n">df</span><span class="o">.</span><span class="n">columns</span><span class="p">:</span>
-        <span class="n">df</span><span class="p">[</span><span class="n">col</span><span class="p">]</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="n">col</span><span class="p">]</span><span class="o">.</span><span class="n">fillna</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
-
-<span class="k">for</span> <span class="n">col</span> <span class="ow">in</span> <span class="n">imputar_mediana</span><span class="p">:</span>
-    <span class="k">if</span> <span class="n">col</span> <span class="ow">in</span> <span class="n">df</span><span class="o">.</span><span class="n">columns</span><span class="p">:</span>
-        <span class="n">median_value</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="n">col</span><span class="p">]</span><span class="o">.</span><span class="n">median</span><span class="p">()</span>
-        <span class="n">df</span><span class="p">[</span><span class="n">col</span><span class="p">]</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="n">col</span><span class="p">]</span><span class="o">.</span><span class="n">fillna</span><span class="p">(</span><span class="n">median_value</span><span class="p">)</span>
-
-<span class="n">missing_summary</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="n">imputar_cero</span> <span class="o">+</span> <span class="n">imputar_mediana</span><span class="p">]</span><span class="o">.</span><span class="n">isnull</span><span class="p">()</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span>
-<span class="nb">print</span><span class="p">(</span><span class="n">missing_summary</span><span class="p">[</span><span class="n">missing_summary</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">])</span>
+<span class="n">imputar_cero</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;monto_total_cobranzas&#39;</span><span class="p">,</span> <span class="s1">&#39;lineas_credito_12m&#39;</span><span class="p">,</span> <span class="s1">&#39;cuentas_tarjeta_credito&#39;</span><span class="p">,</span>
+                <span class="s1">&#39;cuentas_hipotecarias&#39;</span><span class="p">,</span> <span class="s1">&#39;quiebras_publicas&#39;</span><span class="p">,</span> <span class="s1">&#39;cobranzas_12m&#39;</span><span class="p">,</span> <span class="s1">&#39;castigos_12m&#39;</span><span class="p">]</span>
+<span class="n">imputar_mediana</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;meses_ultima_consulta&#39;</span><span class="p">,</span> <span class="s1">&#39;antiguedad_laboral&#39;</span><span class="p">,</span><span class="s1">&#39;porcentaje_sin_moras&#39;</span><span class="p">,</span>
+                   <span class="s1">&#39;limite_credito_total&#39;</span><span class="p">,</span> <span class="s1">&#39;meses_tarjeta_nueva&#39;</span><span class="p">,</span> <span class="s1">&#39;uso_credito_revolvente&#39;</span><span class="p">,</span>
+                   <span class="s1">&#39;dti&#39;</span><span class="p">,</span> <span class="s1">&#39;saldo_revolvente&#39;</span><span class="p">,</span> <span class="s1">&#39;monto_mora&#39;</span><span class="p">]</span>
 </pre></div>
 </div>
 </div>
+</div>
+<div class="cell tag_remove-input docutils container">
 <div class="cell_output docutils container">
 <div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Series([], dtype: int64)
 </pre></div>
@@ -880,47 +629,25 @@ El estadístico z negativo confirma que la proporción observada está significa
 </section>
 <section id="correlacion-de-variables">
 <h2>2.3. Correlación de variables<a class="headerlink" href="#correlacion-de-variables" title="Link to this heading">#</a></h2>
-<p>Matriz de correlación de Spearman entre la variable objetivo y aquellas con indice mayor a 25%.</p>
-<div class="cell docutils container">
-<div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># Correlación de Spearman</span>
-<span class="n">corr</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">corr</span><span class="p">(</span><span class="n">numeric_only</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">method</span><span class="o">=</span><span class="s1">&#39;spearman&#39;</span><span class="p">)[</span><span class="s2">&quot;default&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">sort_values</span><span class="p">(</span><span class="n">ascending</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
-<span class="n">corr_5</span><span class="o">=</span> <span class="n">corr</span><span class="p">[</span><span class="n">corr</span><span class="o">.</span><span class="n">abs</span><span class="p">()</span> <span class="o">&gt;</span> <span class="mf">0.05</span><span class="p">]</span>
-<span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">12</span><span class="p">,</span> <span class="mi">8</span><span class="p">))</span>
-<span class="n">sns</span><span class="o">.</span><span class="n">heatmap</span><span class="p">(</span><span class="n">df</span><span class="p">[</span><span class="n">corr_5</span><span class="o">.</span><span class="n">index</span><span class="p">]</span><span class="o">.</span><span class="n">corr</span><span class="p">(),</span> <span class="n">annot</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">cmap</span><span class="o">=</span><span class="s1">&#39;coolwarm&#39;</span><span class="p">,</span> <span class="n">fmt</span><span class="o">=</span><span class="s1">&#39;.2f&#39;</span><span class="p">,</span> <span class="n">linewidths</span><span class="o">=</span><span class="mf">0.5</span><span class="p">)</span>
-<span class="n">plt</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="s1">&#39;Matriz de correlación: método de Spearman&#39;</span><span class="p">,</span> <span class="n">fontsize</span><span class="o">=</span><span class="mi">20</span><span class="p">)</span>   
-<span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
-</pre></div>
-</div>
-</div>
+<section id="variables-numericas">
+<h3>Variables numéricas<a class="headerlink" href="#variables-numericas" title="Link to this heading">#</a></h3>
+<p>Correlación de variables, con el método de Spearman bajo el supuesto de no normalidad.</p>
+<ul class="simple">
+<li><p><strong>Correlación con la variable objetivo</strong></p></li>
+</ul>
+<div class="cell tag_remove-input docutils container">
 <div class="cell_output docutils container">
-<img alt="_images/f8bfd09e400515adf19942e82a10fccc8db66b7aa551d6291291b3b26e248320.png" src="_images/f8bfd09e400515adf19942e82a10fccc8db66b7aa551d6291291b3b26e248320.png" />
+<img alt="_images/2b972c6743e20203f3aced9b99c51d329e3b714d00659f5e3b02b2741e57275f.png" src="_images/2b972c6743e20203f3aced9b99c51d329e3b714d00659f5e3b02b2741e57275f.png" />
 </div>
 </div>
-<p>Variables con alta correlación (&gt;80%) entre ellas</p>
-<div class="cell docutils container">
-<div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># Calculamos la matriz de correlación de Spearman</span>
-<span class="n">corr_matrix</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">corr</span><span class="p">(</span><span class="n">numeric_only</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">method</span><span class="o">=</span><span class="s1">&#39;spearman&#39;</span><span class="p">)</span>
-
-<span class="c1"># Nos quedamos solo con la parte superior de la matriz para evitar duplicados</span>
-<span class="n">upper</span> <span class="o">=</span> <span class="n">corr_matrix</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">triu</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span><span class="n">corr_matrix</span><span class="o">.</span><span class="n">shape</span><span class="p">),</span> <span class="n">k</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">bool</span><span class="p">))</span>
-
-<span class="c1"># Filtramos pares con correlación mayor a 0.75 (en valor absoluto)</span>
-<span class="n">high_corr</span> <span class="o">=</span> <span class="n">upper</span><span class="o">.</span><span class="n">stack</span><span class="p">()</span><span class="o">.</span><span class="n">reset_index</span><span class="p">()</span>
-<span class="n">high_corr</span><span class="o">.</span><span class="n">columns</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;Variable1&#39;</span><span class="p">,</span> <span class="s1">&#39;Variable2&#39;</span><span class="p">,</span> <span class="s1">&#39;Spearman_corr&#39;</span><span class="p">]</span>
-<span class="n">high_corr</span> <span class="o">=</span> <span class="n">high_corr</span><span class="p">[</span><span class="n">high_corr</span><span class="p">[</span><span class="s1">&#39;Spearman_corr&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">abs</span><span class="p">()</span> <span class="o">&gt;</span> <span class="mf">0.75</span><span class="p">]</span>
-
-<span class="c1"># Ordenamos por correlación absoluta descendente</span>
-<span class="n">high_corr</span> <span class="o">=</span> <span class="n">high_corr</span><span class="o">.</span><span class="n">reindex</span><span class="p">(</span><span class="n">high_corr</span><span class="p">[</span><span class="s1">&#39;Spearman_corr&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">abs</span><span class="p">()</span><span class="o">.</span><span class="n">sort_values</span><span class="p">(</span><span class="n">ascending</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span><span class="o">.</span><span class="n">index</span><span class="p">)</span>
-
-<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Se encontraron </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">high_corr</span><span class="p">)</span><span class="si">}</span><span class="s2"> pares de variables con correlación &gt; 0.75:</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
-<span class="n">high_corr</span>
-</pre></div>
-</div>
-</div>
+<p>La matriz representa las variables con correlación de Spearman mayor al 5% con la variable objetivo <code class="docutils literal notranslate"><span class="pre">default</span></code>. Se observa que ninguna variable guarda una correlación moderada o fuerte con la objetivo.</p>
+<ul class="simple">
+<li><p><strong>Variables con alta correlación</strong><br />
+Se muestran las variables que guardan una correlación mayor al 75% entre ellas.</p></li>
+</ul>
+<div class="cell tag_remove-input docutils container">
 <div class="cell_output docutils container">
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Se encontraron 4 pares de variables con correlación &gt; 0.75:
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Se encontraron 3 pares de variables con correlación &gt; 75%:
 </pre></div>
 </div>
 <div class="output text_html"><div>
@@ -948,70 +675,40 @@ El estadístico z negativo confirma que la proporción observada está significa
   </thead>
   <tbody>
     <tr>
-      <th>1</th>
+      <th>297</th>
       <td>monto_aprobado</td>
       <td>cuota_mensual</td>
       <td>0.969819</td>
     </tr>
     <tr>
-      <th>312</th>
-      <td>uso_credito_revolvente</td>
-      <td>uso_tarjetas_credito</td>
-      <td>0.822315</td>
+      <th>371</th>
+      <td>tasa_interes</td>
+      <td>categoria_credito</td>
+      <td>0.956461</td>
     </tr>
     <tr>
-      <th>410</th>
+      <th>6</th>
       <td>cuentas_en_mora_actual</td>
       <td>monto_mora</td>
-      <td>0.760142</td>
-    </tr>
-    <tr>
-      <th>255</th>
-      <td>meses_ultima_mora</td>
-      <td>porcentaje_sin_moras</td>
-      <td>-0.757959</td>
+      <td>0.760041</td>
     </tr>
   </tbody>
 </table>
 </div></div></div>
 </div>
-<p>Correlación de variables categóricas con la variable objetivo</p>
-<div class="cell docutils container">
-<div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># Correlacion objetos - default</span>
-<span class="k">def</span><span class="w"> </span><span class="nf">cramers_v</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">):</span>
-    <span class="n">tabla</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">crosstab</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">)</span>
-    <span class="n">chi2</span> <span class="o">=</span> <span class="n">chi2_contingency</span><span class="p">(</span><span class="n">tabla</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
-    <span class="n">n</span> <span class="o">=</span> <span class="n">tabla</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span>
-    <span class="n">phi2</span> <span class="o">=</span> <span class="n">chi2</span> <span class="o">/</span> <span class="n">n</span>
-    <span class="n">r</span><span class="p">,</span> <span class="n">k</span> <span class="o">=</span> <span class="n">tabla</span><span class="o">.</span><span class="n">shape</span>
-    <span class="n">phi2corr</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">phi2</span> <span class="o">-</span> <span class="p">((</span><span class="n">k</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span><span class="o">*</span><span class="p">(</span><span class="n">r</span><span class="o">-</span><span class="mi">1</span><span class="p">))</span><span class="o">/</span><span class="p">(</span><span class="n">n</span><span class="o">-</span><span class="mi">1</span><span class="p">))</span>
-    <span class="n">rcorr</span> <span class="o">=</span> <span class="n">r</span> <span class="o">-</span> <span class="p">((</span><span class="n">r</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span><span class="o">/</span><span class="p">(</span><span class="n">n</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span>
-    <span class="n">kcorr</span> <span class="o">=</span> <span class="n">k</span> <span class="o">-</span> <span class="p">((</span><span class="n">k</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span><span class="o">/</span><span class="p">(</span><span class="n">n</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span>
-    <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">phi2corr</span> <span class="o">/</span> <span class="nb">min</span><span class="p">((</span><span class="n">kcorr</span><span class="o">-</span><span class="mi">1</span><span class="p">),</span> <span class="p">(</span><span class="n">rcorr</span><span class="o">-</span><span class="mi">1</span><span class="p">)))</span>
-
-<span class="c1"># Crear lista para guardar resultados</span>
-<span class="n">resultados</span> <span class="o">=</span> <span class="p">[]</span>
-
-<span class="k">for</span> <span class="n">col</span> <span class="ow">in</span> <span class="n">df</span><span class="o">.</span><span class="n">select_dtypes</span><span class="p">(</span><span class="n">include</span><span class="o">=</span><span class="s1">&#39;object&#39;</span><span class="p">):</span>
-    <span class="n">tabla</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">crosstab</span><span class="p">(</span><span class="n">df</span><span class="p">[</span><span class="n">col</span><span class="p">],</span> <span class="n">df</span><span class="p">[</span><span class="s1">&#39;default&#39;</span><span class="p">])</span>
-    <span class="n">chi2</span><span class="p">,</span> <span class="n">p</span><span class="p">,</span> <span class="n">_</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">chi2_contingency</span><span class="p">(</span><span class="n">tabla</span><span class="p">)</span>
-    <span class="n">v</span> <span class="o">=</span> <span class="n">cramers_v</span><span class="p">(</span><span class="n">df</span><span class="p">[</span><span class="n">col</span><span class="p">],</span> <span class="n">df</span><span class="p">[</span><span class="s1">&#39;default&#39;</span><span class="p">])</span>
-    <span class="n">resultados</span><span class="o">.</span><span class="n">append</span><span class="p">({</span>
-        <span class="s2">&quot;Variable&quot;</span><span class="p">:</span> <span class="n">col</span><span class="p">,</span>
-        <span class="s2">&quot;p-valor&quot;</span><span class="p">:</span> <span class="n">p</span><span class="p">,</span>
-        <span class="s2">&quot;Cramér&#39;s V&quot;</span><span class="p">:</span> <span class="n">v</span>
-    <span class="p">})</span>
-
-<span class="c1"># Pasamos a DataFrame</span>
-<span class="n">tabla_resultados</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">resultados</span><span class="p">)</span>
-
-<span class="c1"># Ordenar por Cramér&#39;s V</span>
-<span class="n">tabla_resultados</span> <span class="o">=</span> <span class="n">tabla_resultados</span><span class="o">.</span><span class="n">sort_values</span><span class="p">(</span><span class="n">by</span><span class="o">=</span><span class="s2">&quot;Cramér&#39;s V&quot;</span><span class="p">,</span> <span class="n">ascending</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
-<span class="n">tabla_resultados</span>
-</pre></div>
-</div>
-</div>
+<p>En el contexto:</p>
+<ul class="simple">
+<li><p>La <code class="docutils literal notranslate"><span class="pre">cuota_mensual</span></code> se calcula a partir del monto aprobado, la tasa de interés y el plazo. Dado que es una función que integra al <code class="docutils literal notranslate"><span class="pre">monto_aprobado</span></code>, se descartará esta variable para modelo.</p></li>
+<li><p>La <code class="docutils literal notranslate"><span class="pre">tasa_interes</span></code> está ligada a la <code class="docutils literal notranslate"><span class="pre">categoria_credito</span></code>, con una posible relación causal. Por tanto se descartará la catergoria del credito al ser una variable categórica, que puede reflejarse dentro de la tasa de interes.</p></li>
+</ul>
+</section>
+<section id="variables-categoricas">
+<h3>Variables categóricas<a class="headerlink" href="#variables-categoricas" title="Link to this heading">#</a></h3>
+<p>Correlación de variables categóricas, usando prueba de independencia chi cuadrado y método de Cramers.</p>
+<ul class="simple">
+<li><p><strong>Correlación con la variable objetivo</strong></p></li>
+</ul>
+<div class="cell tag_remove-input docutils container">
 <div class="cell_output docutils container">
 <div class="output text_html"><div>
 <style scoped>
@@ -1039,18 +736,12 @@ El estadístico z negativo confirma que la proporción observada está significa
   <tbody>
     <tr>
       <th>0</th>
-      <td>categoria_credito</td>
-      <td>0.0</td>
-      <td>0.261902</td>
-    </tr>
-    <tr>
-      <th>1</th>
       <td>tipo_vivienda</td>
       <td>0.0</td>
       <td>0.070772</td>
     </tr>
     <tr>
-      <th>2</th>
+      <th>1</th>
       <td>motivo_prestamo</td>
       <td>0.0</td>
       <td>0.055415</td>
@@ -1059,38 +750,11 @@ El estadístico z negativo confirma que la proporción observada está significa
 </table>
 </div></div></div>
 </div>
-<p>Dependencia entre variables categoricas</p>
-<div class="cell docutils container">
-<div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># --- Función Cramér&#39;s--</span>
-<span class="k">def</span><span class="w"> </span><span class="nf">cramers_v</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">):</span>
-    <span class="n">tabla</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">crosstab</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">)</span>
-    <span class="n">chi2</span><span class="p">,</span> <span class="n">_</span><span class="p">,</span> <span class="n">_</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">chi2_contingency</span><span class="p">(</span><span class="n">tabla</span><span class="p">)</span>
-    <span class="n">n</span> <span class="o">=</span> <span class="n">tabla</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span>
-    <span class="n">phi2</span> <span class="o">=</span> <span class="n">chi2</span> <span class="o">/</span> <span class="n">n</span>
-    <span class="n">r</span><span class="p">,</span> <span class="n">k</span> <span class="o">=</span> <span class="n">tabla</span><span class="o">.</span><span class="n">shape</span>
-    <span class="n">phi2corr</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">phi2</span> <span class="o">-</span> <span class="p">((</span><span class="n">k</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span><span class="o">*</span><span class="p">(</span><span class="n">r</span><span class="o">-</span><span class="mi">1</span><span class="p">))</span><span class="o">/</span><span class="p">(</span><span class="n">n</span><span class="o">-</span><span class="mi">1</span><span class="p">))</span>
-    <span class="n">rcorr</span> <span class="o">=</span> <span class="n">r</span> <span class="o">-</span> <span class="p">((</span><span class="n">r</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span><span class="o">/</span><span class="p">(</span><span class="n">n</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span>
-    <span class="n">kcorr</span> <span class="o">=</span> <span class="n">k</span> <span class="o">-</span> <span class="p">((</span><span class="n">k</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span><span class="o">/</span><span class="p">(</span><span class="n">n</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span>
-    <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">phi2corr</span> <span class="o">/</span> <span class="nb">min</span><span class="p">((</span><span class="n">kcorr</span><span class="o">-</span><span class="mi">1</span><span class="p">),</span> <span class="p">(</span><span class="n">rcorr</span><span class="o">-</span><span class="mi">1</span><span class="p">)))</span>
-
-<span class="c1"># --- Función para crear matriz ---</span>
-<span class="k">def</span><span class="w"> </span><span class="nf">association_matrix</span><span class="p">(</span><span class="n">df</span><span class="p">):</span>
-    <span class="n">cat_cols</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">select_dtypes</span><span class="p">(</span><span class="n">include</span><span class="o">=</span><span class="s1">&#39;object&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">columns</span>
-    <span class="n">results</span> <span class="o">=</span> <span class="p">[]</span>
-
-    <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">col1</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">cat_cols</span><span class="p">):</span>
-        <span class="k">for</span> <span class="n">col2</span> <span class="ow">in</span> <span class="n">cat_cols</span><span class="p">[</span><span class="n">i</span><span class="o">+</span><span class="mi">1</span><span class="p">:]:</span>
-            <span class="n">tabla</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">crosstab</span><span class="p">(</span><span class="n">df</span><span class="p">[</span><span class="n">col1</span><span class="p">],</span> <span class="n">df</span><span class="p">[</span><span class="n">col2</span><span class="p">])</span>
-            <span class="n">chi2</span><span class="p">,</span> <span class="n">p</span><span class="p">,</span> <span class="n">_</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">chi2_contingency</span><span class="p">(</span><span class="n">tabla</span><span class="p">)</span>
-            <span class="n">v</span> <span class="o">=</span> <span class="n">cramers_v</span><span class="p">(</span><span class="n">df</span><span class="p">[</span><span class="n">col1</span><span class="p">],</span> <span class="n">df</span><span class="p">[</span><span class="n">col2</span><span class="p">])</span>
-            <span class="n">results</span><span class="o">.</span><span class="n">append</span><span class="p">([</span><span class="n">col1</span><span class="p">,</span> <span class="n">col2</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">p</span><span class="si">:</span><span class="s2">.2e</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span> <span class="nb">round</span><span class="p">(</span><span class="n">v</span><span class="p">,</span> <span class="mi">3</span><span class="p">)])</span>
-    <span class="k">return</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">results</span><span class="p">,</span> <span class="n">columns</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;Variable 1&#39;</span><span class="p">,</span><span class="s1">&#39;Variable 2&#39;</span><span class="p">,</span><span class="s1">&#39;P_value&#39;</span><span class="p">,</span><span class="s1">&#39;Cramers_v&#39;</span><span class="p">])</span>
-<span class="n">assoc_df</span> <span class="o">=</span> <span class="n">association_matrix</span><span class="p">(</span><span class="n">df</span><span class="p">)</span>
-<span class="n">assoc_df</span>
-</pre></div>
-</div>
-</div>
+<p>Para ambos casos, el p-valor de la prueba Chi-Cuadrado es 0.0, lo que significa que las variables están asociadas con la variable objetivo. Pero la fuerza de asociación, descrita por Cramer’s V, es débil.</p>
+<ul class="simple">
+<li><p><strong>Dependencia entre variables categoricas</strong></p></li>
+</ul>
+<div class="cell tag_remove-input docutils container">
 <div class="cell_output docutils container">
 <div class="output text_html"><div>
 <style scoped>
@@ -1119,20 +783,6 @@ El estadístico z negativo confirma que la proporción observada está significa
   <tbody>
     <tr>
       <th>0</th>
-      <td>categoria_credito</td>
-      <td>tipo_vivienda</td>
-      <td>0.00e+00</td>
-      <td>0.038</td>
-    </tr>
-    <tr>
-      <th>1</th>
-      <td>categoria_credito</td>
-      <td>motivo_prestamo</td>
-      <td>0.00e+00</td>
-      <td>0.083</td>
-    </tr>
-    <tr>
-      <th>2</th>
       <td>tipo_vivienda</td>
       <td>motivo_prestamo</td>
       <td>0.00e+00</td>
@@ -1142,325 +792,22 @@ El estadístico z negativo confirma que la proporción observada está significa
 </table>
 </div></div></div>
 </div>
-<p>Todos los p-values son prácticamente 0 → significa que la asociación es estadísticamente significativa (no se debe al azar).</p>
-<p>Pero el Cramér’s V es menor a 0.1 → indica que aunque son significativas, las asociaciones son muy débiles en la práctica.</p>
+<p>Las categorías del tipo de vivienda y el motivo de préstamo son dependientes entre sí, pero su fuerza de asociación es débil.</p>
+</section>
 </section>
 <section id="analisis-por-grupos">
 <h2>2.4 Análisis por grupos<a class="headerlink" href="#analisis-por-grupos" title="Link to this heading">#</a></h2>
 <section id="informacion-del-prestamo">
 <h3>Información del prestamo<a class="headerlink" href="#informacion-del-prestamo" title="Link to this heading">#</a></h3>
-<div class="cell docutils container">
-<div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">binary_maps</span> <span class="o">=</span> <span class="p">{</span>
-    <span class="s1">&#39;plazo_meses&#39;</span><span class="p">:</span> <span class="p">{</span><span class="mi">0</span><span class="p">:</span> <span class="s1">&#39;36 months&#39;</span><span class="p">,</span> <span class="mi">1</span><span class="p">:</span> <span class="s1">&#39;60 months&#39;</span><span class="p">},</span>
-    <span class="s1">&#39;estado_inicial_listado&#39;</span><span class="p">:</span> <span class="p">{</span><span class="mi">0</span><span class="p">:</span> <span class="s1">&#39;Whole&#39;</span><span class="p">,</span> <span class="mi">1</span><span class="p">:</span> <span class="s1">&#39;Fractional&#39;</span><span class="p">},</span>
-    <span class="s1">&#39;tipo_aplicacion&#39;</span><span class="p">:</span> <span class="p">{</span><span class="mi">0</span><span class="p">:</span> <span class="s1">&#39;Individual&#39;</span><span class="p">,</span> <span class="mi">1</span><span class="p">:</span> <span class="s1">&#39;Joint App&#39;</span><span class="p">},</span>
-    <span class="s1">&#39;metodo_desembolso&#39;</span><span class="p">:</span> <span class="p">{</span><span class="mi">0</span><span class="p">:</span><span class="s1">&#39;Cash&#39;</span><span class="p">,</span> <span class="mi">1</span><span class="p">:</span><span class="s1">&#39;DirectPay&#39;</span><span class="p">},</span>
-<span class="p">}</span>
-<span class="n">var_names_info</span><span class="o">=</span> <span class="p">{</span>
-    <span class="s2">&quot;plazo_meses&quot;</span><span class="p">:</span> <span class="s2">&quot;Término del préstamo&quot;</span><span class="p">,</span>
-    <span class="s2">&quot;estado_inicial_listado&quot;</span><span class="p">:</span> <span class="s2">&quot;Estado inicial&quot;</span><span class="p">,</span>
-    <span class="s2">&quot;tipo_aplicacion&quot;</span><span class="p">:</span> <span class="s2">&quot;Tipo de aplicación&quot;</span><span class="p">,</span>
-    <span class="s2">&quot;metodo_desembolso&quot;</span><span class="p">:</span> <span class="s2">&quot;Método de desembolso&quot;</span><span class="p">,</span>
-<span class="p">}</span>
-<span class="n">variables</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">var_names_info</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span>
-<span class="n">tabla_info</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">columns</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;Variable&quot;</span><span class="p">,</span> <span class="s2">&quot;Categoria&quot;</span><span class="p">,</span> <span class="s2">&quot;Count&quot;</span><span class="p">,</span> <span class="s2">&quot;Percentage&quot;</span><span class="p">])</span>
-<span class="n">total</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">df</span><span class="p">)</span>
-<span class="k">for</span> <span class="n">var</span> <span class="ow">in</span> <span class="n">variables</span><span class="p">:</span>
-    <span class="n">tabla</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="n">var</span><span class="p">]</span><span class="o">.</span><span class="n">value_counts</span><span class="p">()</span><span class="o">.</span><span class="n">reset_index</span><span class="p">()</span>
-    <span class="n">tabla</span><span class="o">.</span><span class="n">columns</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;Categoria_cod&quot;</span><span class="p">,</span> <span class="s2">&quot;Count&quot;</span><span class="p">]</span>
-    <span class="n">tabla</span><span class="p">[</span><span class="s2">&quot;Percentage&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="n">tabla</span><span class="p">[</span><span class="s2">&quot;Count&quot;</span><span class="p">]</span> <span class="o">/</span> <span class="n">tabla</span><span class="p">[</span><span class="s2">&quot;Count&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span> <span class="o">*</span> <span class="mi">100</span><span class="p">)</span><span class="o">.</span><span class="n">round</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span>
-    <span class="n">tabla</span><span class="p">[</span><span class="s2">&quot;Variable&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">var_names_info</span><span class="p">[</span><span class="n">var</span><span class="p">]</span>
-    <span class="n">tabla</span><span class="p">[</span><span class="s2">&quot;Categoria&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">tabla</span><span class="p">[</span><span class="s2">&quot;Categoria_cod&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">map</span><span class="p">(</span><span class="n">binary_maps</span><span class="p">[</span><span class="n">var</span><span class="p">])</span>
-    <span class="n">tabla_info</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">concat</span><span class="p">([</span><span class="n">tabla_info</span><span class="p">,</span> <span class="n">tabla</span><span class="p">[[</span><span class="s2">&quot;Variable&quot;</span><span class="p">,</span> <span class="s2">&quot;Categoria&quot;</span><span class="p">,</span> <span class="s2">&quot;Count&quot;</span><span class="p">,</span> <span class="s2">&quot;Percentage&quot;</span><span class="p">]]])</span>
-<span class="n">tabla_resumen</span> <span class="o">=</span> <span class="n">tabla_info</span><span class="o">.</span><span class="n">reset_index</span><span class="p">(</span><span class="n">drop</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-<span class="n">tabla_info</span>
-</pre></div>
-</div>
-</div>
+<ul class="simple">
+<li><p><strong>Monto aprobado</strong></p></li>
+</ul>
+<div class="cell tag_remove-input docutils container">
 <div class="cell_output docutils container">
-<div class="output text_html"><div>
-<style scoped>
-    .dataframe tbody tr th:only-of-type {
-        vertical-align: middle;
-    }
-
-    .dataframe tbody tr th {
-        vertical-align: top;
-    }
-
-    .dataframe thead th {
-        text-align: right;
-    }
-</style>
-<table border="1" class="dataframe">
-  <thead>
-    <tr style="text-align: right;">
-      <th></th>
-      <th>Variable</th>
-      <th>Categoria</th>
-      <th>Count</th>
-      <th>Percentage</th>
-    </tr>
-  </thead>
-  <tbody>
-    <tr>
-      <th>0</th>
-      <td>Término del préstamo</td>
-      <td>36 months</td>
-      <td>1020743</td>
-      <td>75.87</td>
-    </tr>
-    <tr>
-      <th>1</th>
-      <td>Término del préstamo</td>
-      <td>60 months</td>
-      <td>324567</td>
-      <td>24.13</td>
-    </tr>
-    <tr>
-      <th>0</th>
-      <td>Estado inicial</td>
-      <td>Whole</td>
-      <td>784010</td>
-      <td>58.28</td>
-    </tr>
-    <tr>
-      <th>1</th>
-      <td>Estado inicial</td>
-      <td>Fractional</td>
-      <td>561300</td>
-      <td>41.72</td>
-    </tr>
-    <tr>
-      <th>0</th>
-      <td>Tipo de aplicación</td>
-      <td>Individual</td>
-      <td>1319510</td>
-      <td>98.08</td>
-    </tr>
-    <tr>
-      <th>1</th>
-      <td>Tipo de aplicación</td>
-      <td>Joint App</td>
-      <td>25800</td>
-      <td>1.92</td>
-    </tr>
-    <tr>
-      <th>0</th>
-      <td>Método de desembolso</td>
-      <td>Cash</td>
-      <td>1338410</td>
-      <td>99.49</td>
-    </tr>
-    <tr>
-      <th>1</th>
-      <td>Método de desembolso</td>
-      <td>DirectPay</td>
-      <td>6900</td>
-      <td>0.51</td>
-    </tr>
-  </tbody>
-</table>
-</div></div></div>
-</div>
-<div class="cell docutils container">
-<div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># Crear figura con 1 fila y 4 columnas</span>
-<span class="n">fig</span><span class="p">,</span> <span class="n">axes</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">20</span><span class="p">,</span> <span class="mi">5</span><span class="p">))</span>  
-
-<span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">var</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">variables</span><span class="p">):</span>
-    <span class="n">tabla</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="n">var</span><span class="p">]</span><span class="o">.</span><span class="n">value_counts</span><span class="p">()</span><span class="o">.</span><span class="n">reset_index</span><span class="p">()</span>
-    <span class="n">tabla</span><span class="o">.</span><span class="n">columns</span> <span class="o">=</span> <span class="p">[</span><span class="n">var</span><span class="p">,</span> <span class="s2">&quot;Count&quot;</span><span class="p">]</span>
-    
-    <span class="c1"># Reemplazar valores con binary_maps</span>
-    <span class="n">tabla</span><span class="p">[</span><span class="n">var</span><span class="p">]</span> <span class="o">=</span> <span class="n">tabla</span><span class="p">[</span><span class="n">var</span><span class="p">]</span><span class="o">.</span><span class="n">map</span><span class="p">(</span><span class="n">binary_maps</span><span class="p">[</span><span class="n">var</span><span class="p">])</span>
-    
-    <span class="c1"># Gráfico</span>
-    <span class="n">axes</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">bar</span><span class="p">(</span><span class="n">tabla</span><span class="p">[</span><span class="n">var</span><span class="p">],</span> <span class="n">tabla</span><span class="p">[</span><span class="s2">&quot;Count&quot;</span><span class="p">],</span> <span class="n">color</span><span class="o">=</span><span class="s2">&quot;skyblue&quot;</span><span class="p">,</span> <span class="n">edgecolor</span><span class="o">=</span><span class="s2">&quot;black&quot;</span><span class="p">)</span>
-    <span class="n">axes</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="n">var_names</span><span class="p">[</span><span class="n">var</span><span class="p">],</span> <span class="n">fontsize</span><span class="o">=</span><span class="mi">12</span><span class="p">,</span> <span class="n">fontweight</span><span class="o">=</span><span class="s2">&quot;bold&quot;</span><span class="p">)</span>
-    <span class="n">axes</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s2">&quot;Frecuencia&quot;</span><span class="p">)</span>
-    <span class="n">axes</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="s2">&quot;Categoría&quot;</span><span class="p">)</span>
-    <span class="n">axes</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">tick_params</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="s1">&#39;x&#39;</span><span class="p">,</span> <span class="n">rotation</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>  <span class="c1"># rotar etiquetas</span>
-
-<span class="c1"># Ajustar espacios</span>
-<span class="n">plt</span><span class="o">.</span><span class="n">tight_layout</span><span class="p">()</span>
-<span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
-</pre></div>
+<img alt="_images/5496db116cb282074a7f61ffa35f0eb3c1e1559465df306114f60d88d0c4c2c5.png" src="_images/5496db116cb282074a7f61ffa35f0eb3c1e1559465df306114f60d88d0c4c2c5.png" />
 </div>
 </div>
-<div class="cell_output docutils container">
-<div class="output traceback highlight-ipythontb notranslate"><div class="highlight"><pre><span></span><span class="gt">---------------------------------------------------------------------------</span>
-<span class="ne">NameError</span><span class="g g-Whitespace">                                 </span>Traceback (most recent call last)
-<span class="n">Cell</span> <span class="n">In</span><span class="p">[</span><span class="mi">19</span><span class="p">],</span> <span class="n">line</span> <span class="mi">13</span>
-<span class="g g-Whitespace">     </span><span class="mi">11</span> <span class="c1"># Gráfico</span>
-<span class="g g-Whitespace">     </span><span class="mi">12</span> <span class="n">axes</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">bar</span><span class="p">(</span><span class="n">tabla</span><span class="p">[</span><span class="n">var</span><span class="p">],</span> <span class="n">tabla</span><span class="p">[</span><span class="s2">&quot;Count&quot;</span><span class="p">],</span> <span class="n">color</span><span class="o">=</span><span class="s2">&quot;skyblue&quot;</span><span class="p">,</span> <span class="n">edgecolor</span><span class="o">=</span><span class="s2">&quot;black&quot;</span><span class="p">)</span>
-<span class="ne">---&gt; </span><span class="mi">13</span> <span class="n">axes</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="n">var_names</span><span class="p">[</span><span class="n">var</span><span class="p">],</span> <span class="n">fontsize</span><span class="o">=</span><span class="mi">12</span><span class="p">,</span> <span class="n">fontweight</span><span class="o">=</span><span class="s2">&quot;bold&quot;</span><span class="p">)</span>
-<span class="g g-Whitespace">     </span><span class="mi">14</span> <span class="n">axes</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s2">&quot;Frecuencia&quot;</span><span class="p">)</span>
-<span class="g g-Whitespace">     </span><span class="mi">15</span> <span class="n">axes</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="s2">&quot;Categoría&quot;</span><span class="p">)</span>
-
-<span class="ne">NameError</span>: name &#39;var_names&#39; is not defined
-</pre></div>
-</div>
-<img alt="_images/595ae32f737cf98316d6f3468eb33b991efb33f987cd745873c505d4c3a120f5.png" src="_images/595ae32f737cf98316d6f3468eb33b991efb33f987cd745873c505d4c3a120f5.png" />
-</div>
-</div>
-<div class="cell docutils container">
-<div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># Crear tabla cruzada de frecuencia</span>
-<span class="n">tabla_g</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">crosstab</span><span class="p">(</span><span class="n">df</span><span class="p">[</span><span class="s1">&#39;grade&#39;</span><span class="p">],</span> <span class="n">df</span><span class="p">[</span><span class="s1">&#39;sub_grade_num&#39;</span><span class="p">])</span>
-
-<span class="c1"># Graficar heatmap</span>
-<span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">10</span><span class="p">,</span><span class="mi">6</span><span class="p">))</span>
-<span class="n">sns</span><span class="o">.</span><span class="n">heatmap</span><span class="p">(</span><span class="n">tabla_g</span><span class="p">,</span> <span class="n">annot</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">fmt</span><span class="o">=</span><span class="s2">&quot;d&quot;</span><span class="p">,</span> <span class="n">cmap</span><span class="o">=</span><span class="s2">&quot;Blues&quot;</span><span class="p">,</span> <span class="n">cbar</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-
-<span class="n">plt</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="s2">&quot;Distribución de Préstamos por Grade y Subgrade&quot;</span><span class="p">,</span> <span class="n">fontsize</span><span class="o">=</span><span class="mi">14</span><span class="p">,</span> <span class="n">fontweight</span><span class="o">=</span><span class="s2">&quot;bold&quot;</span><span class="p">)</span>
-<span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s2">&quot;Subgrade&quot;</span><span class="p">)</span>
-<span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="s2">&quot;Grade&quot;</span><span class="p">)</span>
-<span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
-</pre></div>
-</div>
-</div>
-<div class="cell_output docutils container">
-<img alt="_images/81a48d96582ba80df18217db3bc90fff26c4664692ba8b03687f32b29b7a8813.png" src="_images/81a48d96582ba80df18217db3bc90fff26c4664692ba8b03687f32b29b7a8813.png" />
-</div>
-</div>
-<div class="cell docutils container">
-<div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># Conteo de purpose</span>
-<span class="n">conteo_purpose</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="s1">&#39;purpose&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">value_counts</span><span class="p">()</span>
-
-<span class="c1"># Top 2 y el resto</span>
-<span class="n">top2</span> <span class="o">=</span> <span class="n">conteo_purpose</span><span class="o">.</span><span class="n">head</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span>
-<span class="n">resto</span> <span class="o">=</span> <span class="n">conteo_purpose</span><span class="o">.</span><span class="n">iloc</span><span class="p">[</span><span class="mi">2</span><span class="p">:]</span>
-
-<span class="c1"># Crear subplots</span>
-<span class="n">fig</span><span class="p">,</span> <span class="n">axes</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">14</span><span class="p">,</span><span class="mi">6</span><span class="p">),</span> <span class="n">sharey</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
-
-<span class="c1"># Gráfico top 2</span>
-<span class="n">sns</span><span class="o">.</span><span class="n">barplot</span><span class="p">(</span><span class="n">x</span><span class="o">=</span><span class="n">top2</span><span class="o">.</span><span class="n">index</span><span class="p">,</span> <span class="n">y</span><span class="o">=</span><span class="n">top2</span><span class="o">.</span><span class="n">values</span><span class="p">,</span> <span class="n">palette</span><span class="o">=</span><span class="s2">&quot;Blues_d&quot;</span><span class="p">,</span> <span class="n">ax</span><span class="o">=</span><span class="n">axes</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
-<span class="n">axes</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="s2">&quot;Top 2 propósitos más frecuentes&quot;</span><span class="p">,</span> <span class="n">fontsize</span><span class="o">=</span><span class="mi">12</span><span class="p">,</span> <span class="n">fontweight</span><span class="o">=</span><span class="s2">&quot;bold&quot;</span><span class="p">)</span>
-<span class="n">axes</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="s2">&quot;Propósito&quot;</span><span class="p">)</span>
-<span class="n">axes</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s2">&quot;Cantidad de Préstamos&quot;</span><span class="p">)</span>
-<span class="n">axes</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">tick_params</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="s1">&#39;x&#39;</span><span class="p">,</span> <span class="n">rotation</span><span class="o">=</span><span class="mi">20</span><span class="p">)</span>
-
-<span class="c1"># Gráfico resto</span>
-<span class="n">sns</span><span class="o">.</span><span class="n">barplot</span><span class="p">(</span><span class="n">y</span><span class="o">=</span><span class="n">resto</span><span class="o">.</span><span class="n">index</span><span class="p">,</span> <span class="n">x</span><span class="o">=</span><span class="n">resto</span><span class="o">.</span><span class="n">values</span><span class="p">,</span> <span class="n">palette</span><span class="o">=</span><span class="s2">&quot;Greens_d&quot;</span><span class="p">,</span> <span class="n">ax</span><span class="o">=</span><span class="n">axes</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
-<span class="n">axes</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="s2">&quot;Otros propósitos&quot;</span><span class="p">,</span> <span class="n">fontsize</span><span class="o">=</span><span class="mi">12</span><span class="p">,</span> <span class="n">fontweight</span><span class="o">=</span><span class="s2">&quot;bold&quot;</span><span class="p">)</span>
-<span class="n">axes</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="s2">&quot;Propósito&quot;</span><span class="p">)</span>
-<span class="n">axes</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s2">&quot;Cantidad de Préstamos&quot;</span><span class="p">)</span>
-<span class="n">axes</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">tick_params</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="s1">&#39;x&#39;</span><span class="p">,</span> <span class="n">rotation</span><span class="o">=</span><span class="mi">90</span><span class="p">)</span>
-
-<span class="n">plt</span><span class="o">.</span><span class="n">tight_layout</span><span class="p">()</span>
-<span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
-</pre></div>
-</div>
-</div>
-<div class="cell_output docutils container">
-<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>C:\Users\Hp\AppData\Local\Temp\ipykernel_18364\1046841379.py:12: FutureWarning:
-
-
-
-Passing `palette` without assigning `hue` is deprecated and will be removed in v0.14.0. Assign the `x` variable to `hue` and set `legend=False` for the same effect.
-
-
-C:\Users\Hp\AppData\Local\Temp\ipykernel_18364\1046841379.py:19: FutureWarning:
-
-
-
-Passing `palette` without assigning `hue` is deprecated and will be removed in v0.14.0. Assign the `y` variable to `hue` and set `legend=False` for the same effect.
-</pre></div>
-</div>
-<img alt="_images/36dedf8343c97c7fadeea2a18dbf38210a3bcb18d556d979459d481a7c475249.png" src="_images/36dedf8343c97c7fadeea2a18dbf38210a3bcb18d556d979459d481a7c475249.png" />
-</div>
-</div>
-<div class="cell docutils container">
-<div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># Contar valores</span>
-<span class="n">gap_0</span> <span class="o">=</span> <span class="p">(</span><span class="n">df</span><span class="p">[</span><span class="s1">&#39;loan_gap&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="mi">0</span><span class="p">)</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span>
-<span class="n">gap_no_0</span> <span class="o">=</span> <span class="p">(</span><span class="n">df</span><span class="p">[</span><span class="s1">&#39;loan_gap&#39;</span><span class="p">]</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">)</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span>
-
-<span class="c1"># Crear tabla resumen</span>
-<span class="n">tabla_gap</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">({</span>
-    <span class="s1">&#39;loan_gap&#39;</span><span class="p">:</span> <span class="p">[</span><span class="s1">&#39;Igual a 0&#39;</span><span class="p">,</span> <span class="s1">&#39;Distinto de 0&#39;</span><span class="p">],</span>
-    <span class="s1">&#39;Cantidad&#39;</span><span class="p">:</span> <span class="p">[</span><span class="n">gap_0</span><span class="p">,</span> <span class="n">gap_no_0</span><span class="p">]</span>
-<span class="p">})</span>
-
-<span class="n">tabla_gap</span>
-</pre></div>
-</div>
-</div>
-<div class="cell_output docutils container">
-<div class="output text_html"><div>
-<style scoped>
-    .dataframe tbody tr th:only-of-type {
-        vertical-align: middle;
-    }
-
-    .dataframe tbody tr th {
-        vertical-align: top;
-    }
-
-    .dataframe thead th {
-        text-align: right;
-    }
-</style>
-<table border="1" class="dataframe">
-  <thead>
-    <tr style="text-align: right;">
-      <th></th>
-      <th>loan_gap</th>
-      <th>Cantidad</th>
-    </tr>
-  </thead>
-  <tbody>
-    <tr>
-      <th>0</th>
-      <td>Igual a 0</td>
-      <td>1343389</td>
-    </tr>
-    <tr>
-      <th>1</th>
-      <td>Distinto de 0</td>
-      <td>1921</td>
-    </tr>
-  </tbody>
-</table>
-</div></div></div>
-</div>
-<div class="cell docutils container">
-<div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># Resumen de variables numéricas </span>
-
-<span class="n">var_info</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;loan_gap&#39;</span><span class="p">,</span> <span class="s1">&#39;installment&#39;</span><span class="p">,</span> <span class="s1">&#39;int_rate&#39;</span><span class="p">]</span>
-<span class="n">var_names</span> <span class="o">=</span> <span class="p">{</span>
-    <span class="s1">&#39;loan_gap&#39;</span><span class="p">:</span> <span class="s1">&#39;Monto solicitado - dado&#39;</span><span class="p">,</span>
-    <span class="s1">&#39;installment&#39;</span><span class="p">:</span> <span class="s1">&#39;Capacidad de pago&#39;</span><span class="p">,</span>
-    <span class="s1">&#39;int_rate&#39;</span><span class="p">:</span> <span class="s1">&#39;Tasa de interés anual&#39;</span>
-<span class="p">}</span>
-
-<span class="n">resumen</span> <span class="o">=</span> <span class="p">[]</span>
-<span class="k">for</span> <span class="n">var</span> <span class="ow">in</span> <span class="n">var_info</span><span class="p">:</span>
-    <span class="k">if</span> <span class="n">var</span> <span class="o">==</span> <span class="s1">&#39;loan_gap&#39;</span><span class="p">:</span>
-        <span class="n">datos</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="n">df</span><span class="p">[</span><span class="s1">&#39;loan_gap&#39;</span><span class="p">]</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">][</span><span class="n">var</span><span class="p">]</span>
-    <span class="k">else</span><span class="p">:</span>
-        <span class="n">datos</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="n">var</span><span class="p">]</span>
-    
-    <span class="n">resumen</span><span class="o">.</span><span class="n">append</span><span class="p">({</span>
-        <span class="s2">&quot;Variable&quot;</span><span class="p">:</span> <span class="n">var_names</span><span class="p">[</span><span class="n">var</span><span class="p">],</span>
-        <span class="s2">&quot;Mínimo&quot;</span><span class="p">:</span> <span class="n">datos</span><span class="o">.</span><span class="n">min</span><span class="p">(),</span>
-        <span class="s2">&quot;Máximo&quot;</span><span class="p">:</span> <span class="n">datos</span><span class="o">.</span><span class="n">max</span><span class="p">(),</span>
-        <span class="s2">&quot;Media&quot;</span><span class="p">:</span> <span class="n">datos</span><span class="o">.</span><span class="n">mean</span><span class="p">(),</span>
-        <span class="s2">&quot;Desviación estándar&quot;</span><span class="p">:</span> <span class="n">datos</span><span class="o">.</span><span class="n">std</span><span class="p">(),</span>
-        <span class="s2">&quot;25%&quot;</span><span class="p">:</span> <span class="n">datos</span><span class="o">.</span><span class="n">quantile</span><span class="p">(</span><span class="mf">0.25</span><span class="p">),</span>
-        <span class="s2">&quot;Mediana&quot;</span><span class="p">:</span> <span class="n">datos</span><span class="o">.</span><span class="n">median</span><span class="p">(),</span>
-        <span class="s2">&quot;75%&quot;</span><span class="p">:</span> <span class="n">datos</span><span class="o">.</span><span class="n">quantile</span><span class="p">(</span><span class="mf">0.75</span><span class="p">),</span>
-    <span class="p">})</span>
-<span class="n">t_resumen_info</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">resumen</span><span class="p">)</span>
-<span class="n">t_resumen_info</span>
-</pre></div>
-</div>
-</div>
+<div class="cell tag_remove-input docutils container">
 <div class="cell_output docutils container">
 <div class="output text_html"><div>
 <style scoped>
@@ -1493,33 +840,75 @@ Passing `palette` without assigning `hue` is deprecated and will be removed in v
   <tbody>
     <tr>
       <th>0</th>
-      <td>Monto solicitado - dado</td>
-      <td>25.00</td>
-      <td>21150.00</td>
-      <td>5893.440916</td>
-      <td>3459.717584</td>
-      <td>3300.00</td>
-      <td>5550.00</td>
-      <td>8075.00</td>
+      <td>Monto aprobado</td>
+      <td>500.0</td>
+      <td>40000.0</td>
+      <td>14411.557</td>
+      <td>8713.118</td>
+      <td>8000.0</td>
+      <td>12000.0</td>
+      <td>20000.0</td>
     </tr>
-    <tr>
-      <th>1</th>
-      <td>Capacidad de pago</td>
-      <td>4.93</td>
-      <td>1719.83</td>
-      <td>438.075533</td>
-      <td>261.512604</td>
-      <td>248.48</td>
-      <td>375.43</td>
-      <td>580.73</td>
+  </tbody>
+</table>
+</div></div></div>
+</div>
+<div class="cell tag_remove-input docutils container">
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span> Distribución de normalidad para: monto_aprobado
+    Estadístico: 0.9373, p-valor: 0.00
+ Distribución no normal
+</pre></div>
+</div>
+</div>
+</div>
+<p>El monto aprobado por préstamo varia entre los <span class="math notranslate nohighlight">\(500\)</span> a <span class="math notranslate nohighlight">\(40,000\)</span> dólares, con un valor medio de <span class="math notranslate nohighlight">\(14,411.55\)</span> (<span class="math notranslate nohighlight">\(\pm 8,713.11\)</span>). La distribución de estos prestamos no sigue una distribución normal, con outlayers luego de los <span class="math notranslate nohighlight">\(20,000\)</span> dólares.</p>
+<ul class="simple">
+<li><p><strong>Tasa de interes</strong></p></li>
+</ul>
+<div class="cell tag_remove-input docutils container">
+<div class="cell_output docutils container">
+<img alt="_images/8d8ab11974d49d1a04238ccd60a343b05f34ec11eb45aeb9e04587029e14bad6.png" src="_images/8d8ab11974d49d1a04238ccd60a343b05f34ec11eb45aeb9e04587029e14bad6.png" />
+</div>
+</div>
+<div class="cell tag_remove-input docutils container">
+<div class="cell_output docutils container">
+<div class="output text_html"><div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>Variable</th>
+      <th>Mínimo</th>
+      <th>Máximo</th>
+      <th>Media</th>
+      <th>Desviación estándar</th>
+      <th>25%</th>
+      <th>Mediana</th>
+      <th>75%</th>
     </tr>
+  </thead>
+  <tbody>
     <tr>
-      <th>2</th>
-      <td>Tasa de interés anual</td>
+      <th>0</th>
+      <td>Tasa de interes</td>
       <td>5.31</td>
       <td>30.99</td>
-      <td>13.239619</td>
-      <td>4.768716</td>
+      <td>13.24</td>
+      <td>4.769</td>
       <td>9.75</td>
       <td>12.74</td>
       <td>15.99</td>
@@ -1528,70 +917,152 @@ Passing `palette` without assigning `hue` is deprecated and will be removed in v
 </table>
 </div></div></div>
 </div>
-<div class="cell docutils container">
-<div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># Gráfico tasa de interes anual</span>
-
-<span class="n">sns</span><span class="o">.</span><span class="n">boxplot</span><span class="p">(</span><span class="n">x</span><span class="o">=</span><span class="n">df</span><span class="p">[</span><span class="s1">&#39;installment&#39;</span><span class="p">])</span>
-<span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
-
-<span class="n">sns</span><span class="o">.</span><span class="n">boxplot</span><span class="p">(</span><span class="n">x</span><span class="o">=</span><span class="n">df</span><span class="p">[</span><span class="s1">&#39;int_rate&#39;</span><span class="p">])</span>
-<span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
-
-<span class="n">df_gap</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="n">df</span><span class="p">[</span><span class="s1">&#39;loan_gap&#39;</span><span class="p">]</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">]</span>
-<span class="n">sns</span><span class="o">.</span><span class="n">boxplot</span><span class="p">(</span><span class="n">x</span><span class="o">=</span><span class="n">df_gap</span><span class="p">[</span><span class="s1">&#39;loan_gap&#39;</span><span class="p">])</span>
-<span class="n">plt</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="s1">&#39;Distribución de loan_gap (≠ 0)&#39;</span><span class="p">)</span>
-<span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s1">&#39;Diferencia entre monto solicitado y financiado&#39;</span><span class="p">)</span>
-<span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="s1">&#39;Frecuencia&#39;</span><span class="p">)</span>
-<span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
-</pre></div>
-</div>
-</div>
+<div class="cell tag_remove-input docutils container">
 <div class="cell_output docutils container">
-<img alt="_images/cd4c712fb352753580da4bda071a6f9d98783cc114decf13ef2ae6f6563f4788.png" src="_images/cd4c712fb352753580da4bda071a6f9d98783cc114decf13ef2ae6f6563f4788.png" />
-<img alt="_images/0b8d8a6fcd174ce6cbc8c9eaa761ddffdffbe459d71d3a6485f9966192f40032.png" src="_images/0b8d8a6fcd174ce6cbc8c9eaa761ddffdffbe459d71d3a6485f9966192f40032.png" />
-<img alt="_images/1a20301523920d7860bd1e5226056ee460aebb97a92b14ac34a50f8c4014e242.png" src="_images/1a20301523920d7860bd1e5226056ee460aebb97a92b14ac34a50f8c4014e242.png" />
-</div>
-</div>
-</section>
-<section id="informacion-del-prestadiario">
-<h3>Información del prestadiario<a class="headerlink" href="#informacion-del-prestadiario" title="Link to this heading">#</a></h3>
-<div class="cell docutils container">
-<div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># Resumen de variables numéricas </span>
-
-<span class="n">var_pres</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;fico_range_mean&#39;</span><span class="p">,</span> <span class="s1">&#39;dti&#39;</span><span class="p">]</span>
-<span class="n">var_names_p</span> <span class="o">=</span> <span class="p">{</span>
-    <span class="s1">&#39;fico_range_mean&#39;</span><span class="p">:</span> <span class="s1">&#39;Puntaje FICO&#39;</span><span class="p">,</span>
-    <span class="s1">&#39;dti&#39;</span><span class="p">:</span> <span class="s1">&#39;Debt to Income&#39;</span>
-<span class="p">}</span>
-
-<span class="c1"># Winsorizar al percentil 99</span>
-<span class="n">p99</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="s1">&#39;dti&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">quantile</span><span class="p">(</span><span class="mf">0.99</span><span class="p">)</span>
-<span class="n">df</span><span class="p">[</span><span class="s1">&#39;dti&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="s1">&#39;dti&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">clip</span><span class="p">(</span><span class="n">upper</span><span class="o">=</span><span class="n">p99</span><span class="p">)</span>
-
-<span class="n">res</span> <span class="o">=</span> <span class="p">[]</span>
-<span class="k">for</span> <span class="n">var</span> <span class="ow">in</span> <span class="n">var_pres</span><span class="p">:</span>
-    <span class="k">if</span> <span class="n">var</span> <span class="o">==</span> <span class="s1">&#39;dti&#39;</span><span class="p">:</span>
-        <span class="n">datos</span> <span class="o">=</span> <span class="n">df</span><span class="p">[(</span><span class="n">df</span><span class="p">[</span><span class="s1">&#39;dti&#39;</span><span class="p">]</span> <span class="o">!=</span> <span class="o">-</span><span class="mi">1</span><span class="p">)</span> <span class="o">&amp;</span> <span class="p">(</span><span class="n">df</span><span class="p">[</span><span class="s1">&#39;dti&#39;</span><span class="p">]</span> <span class="o">!=</span> <span class="mi">999</span><span class="p">)][</span><span class="n">var</span><span class="p">]</span>
-    <span class="k">else</span><span class="p">:</span>
-        <span class="n">datos</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="n">var</span><span class="p">]</span>
-
-    <span class="n">res</span><span class="o">.</span><span class="n">append</span><span class="p">({</span>
-        <span class="s2">&quot;Variable&quot;</span><span class="p">:</span> <span class="n">var_names_p</span><span class="p">[</span><span class="n">var</span><span class="p">],</span>
-        <span class="s2">&quot;Mínimo&quot;</span><span class="p">:</span> <span class="n">datos</span><span class="o">.</span><span class="n">min</span><span class="p">(),</span>
-        <span class="s2">&quot;Máximo&quot;</span><span class="p">:</span> <span class="n">datos</span><span class="o">.</span><span class="n">max</span><span class="p">(),</span>
-        <span class="s2">&quot;Media&quot;</span><span class="p">:</span> <span class="n">datos</span><span class="o">.</span><span class="n">mean</span><span class="p">(),</span>
-        <span class="s2">&quot;Desviación estándar&quot;</span><span class="p">:</span> <span class="n">datos</span><span class="o">.</span><span class="n">std</span><span class="p">(),</span>
-        <span class="s2">&quot;25%&quot;</span><span class="p">:</span> <span class="n">datos</span><span class="o">.</span><span class="n">quantile</span><span class="p">(</span><span class="mf">0.25</span><span class="p">),</span>
-        <span class="s2">&quot;Mediana&quot;</span><span class="p">:</span> <span class="n">datos</span><span class="o">.</span><span class="n">median</span><span class="p">(),</span>
-        <span class="s2">&quot;75%&quot;</span><span class="p">:</span> <span class="n">datos</span><span class="o">.</span><span class="n">quantile</span><span class="p">(</span><span class="mf">0.75</span><span class="p">),</span>
-    <span class="p">})</span>
-<span class="n">t_resumen_pres</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">res</span><span class="p">)</span>
-<span class="n">t_resumen_pres</span>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span> Distribución de normalidad para: tasa_interes
+    Estadístico: 0.9650, p-valor: 0.00
+ Distribución no normal
 </pre></div>
 </div>
 </div>
+</div>
+<p>Para la tasa de interés, el porcentaje varia entre <span class="math notranslate nohighlight">\(5.31\%\)</span> a <span class="math notranslate nohighlight">\(30.99\%\)</span>, con un porcentaje medio de <span class="math notranslate nohighlight">\(13.24\%\)</span> (<span class="math notranslate nohighlight">\(\pm 4.7\%\)</span>). No siguen una distribución normal y existen outlayers después de los <span class="math notranslate nohighlight">\(15.99%\)</span>.</p>
+<ul class="simple">
+<li><p><strong>Plazo del préstamo</strong></p></li>
+</ul>
+<div class="cell tag_remove-input docutils container">
+</div>
+<div class="cell tag_remove-input docutils container">
+<div class="cell_output docutils container">
+<img alt="_images/74d1c1ed033c9025a963e3769bcdd7bb4ad7a30d276332840e47190d3147c3b4.png" src="_images/74d1c1ed033c9025a963e3769bcdd7bb4ad7a30d276332840e47190d3147c3b4.png" />
+</div>
+</div>
+<div class="cell tag_remove-input docutils container">
+<div class="cell_output docutils container">
+<div class="output text_html"><div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>Categoría</th>
+      <th>Conteo</th>
+      <th>Porcentaje</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>0</th>
+      <td>36 months</td>
+      <td>1020743</td>
+      <td>75.87</td>
+    </tr>
+    <tr>
+      <th>1</th>
+      <td>60 months</td>
+      <td>324567</td>
+      <td>24.13</td>
+    </tr>
+  </tbody>
+</table>
+</div></div></div>
+</div>
+<p>Los prestamos otorgados se han dado en su mayoría (<span class="math notranslate nohighlight">\(75.87\%\)</span>) son otorgados para 36 meses. Solo <span class="math notranslate nohighlight">\(324,567\)</span> préstamos fueron otorgados para un plazo de 60 meses.</p>
+<ul class="simple">
+<li><p><strong>Motivo del préstamo</strong></p></li>
+</ul>
+<div class="cell tag_remove-input docutils container">
+</div>
+<div class="cell tag_remove-input docutils container">
+<div class="cell_output docutils container">
+<img alt="_images/80c4db4ac11a78fa9dd1f1e1539c1c5bd8c7bbcae33c8061717048bea21d2528.png" src="_images/80c4db4ac11a78fa9dd1f1e1539c1c5bd8c7bbcae33c8061717048bea21d2528.png" />
+</div>
+</div>
+<div class="cell tag_remove-input docutils container">
+<div class="cell_output docutils container">
+<div class="output text_html"><div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>Categoría</th>
+      <th>Conteo</th>
+      <th>Porcentaje</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>0</th>
+      <td>debt_consolidation</td>
+      <td>780321</td>
+      <td>58.00</td>
+    </tr>
+    <tr>
+      <th>1</th>
+      <td>credit_card</td>
+      <td>295279</td>
+      <td>21.95</td>
+    </tr>
+    <tr>
+      <th>2</th>
+      <td>home_improvement</td>
+      <td>87504</td>
+      <td>6.50</td>
+    </tr>
+    <tr>
+      <th>3</th>
+      <td>other</td>
+      <td>77875</td>
+      <td>5.79</td>
+    </tr>
+    <tr>
+      <th>4</th>
+      <td>major_purchase</td>
+      <td>29425</td>
+      <td>2.19</td>
+    </tr>
+  </tbody>
+</table>
+</div></div></div>
+</div>
+<p>La mayoría de los propósitos para los prestamos otorgados fueron para consolidación de deudas (<span class="math notranslate nohighlight">\(59\%\)</span>) o por concepto tarjeta de crédito (<span class="math notranslate nohighlight">\(21.95\%\)</span>).</p>
+</section>
+<section id="informacion-del-prestatario">
+<h3>Información del prestatario<a class="headerlink" href="#informacion-del-prestatario" title="Link to this heading">#</a></h3>
+<ul class="simple">
+<li><p><strong>Ingreso anual</strong></p></li>
+</ul>
+<div class="cell tag_remove-input docutils container">
+<div class="cell_output docutils container">
+<img alt="_images/60d73ea8043baf1134da8efb68a139e89737d264df8b501f6245bde8cec67d6f.png" src="_images/60d73ea8043baf1134da8efb68a139e89737d264df8b501f6245bde8cec67d6f.png" />
+</div>
+</div>
+<div class="cell tag_remove-input docutils container">
 <div class="cell_output docutils container">
 <div class="output text_html"><div>
 <style scoped>
@@ -1624,150 +1095,321 @@ Passing `palette` without assigning `hue` is deprecated and will be removed in v
   <tbody>
     <tr>
       <th>0</th>
-      <td>Puntaje FICO</td>
-      <td>627.0</td>
-      <td>847.50</td>
-      <td>698.185108</td>
-      <td>31.852836</td>
-      <td>672.00</td>
-      <td>692.00</td>
-      <td>712.00</td>
-    </tr>
-    <tr>
-      <th>1</th>
-      <td>Debt to Income</td>
+      <td>Ingresos anuales &lt; 500K</td>
       <td>0.0</td>
-      <td>38.37</td>
-      <td>18.118733</td>
-      <td>8.432028</td>
-      <td>11.79</td>
-      <td>17.61</td>
-      <td>24.04</td>
+      <td>499992.0</td>
+      <td>74929.453</td>
+      <td>45090.023</td>
+      <td>45696.0</td>
+      <td>65000.0</td>
+      <td>90000.0</td>
     </tr>
   </tbody>
 </table>
 </div></div></div>
 </div>
-<div class="cell docutils container">
-<div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># Histograma + KDE para FICO Range Mean</span>
-<span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">6</span><span class="p">,</span><span class="mi">4</span><span class="p">))</span>
-<span class="n">sns</span><span class="o">.</span><span class="n">boxplot</span><span class="p">(</span><span class="n">x</span><span class="o">=</span><span class="n">df</span><span class="p">[</span><span class="s2">&quot;fico_range_mean&quot;</span><span class="p">])</span>
-<span class="n">plt</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="s2">&quot;Distribución de FICO Range Mean&quot;</span><span class="p">)</span>
-<span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
-
-
-<span class="c1"># Histograma para DTI</span>
-<span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">6</span><span class="p">,</span><span class="mi">4</span><span class="p">))</span>
-<span class="n">sns</span><span class="o">.</span><span class="n">boxplot</span><span class="p">(</span><span class="n">x</span><span class="o">=</span><span class="n">df</span><span class="p">[</span><span class="s2">&quot;dti&quot;</span><span class="p">])</span>
-<span class="n">plt</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="s2">&quot;Distribución de DTI&quot;</span><span class="p">)</span>
-<span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+<div class="cell tag_remove-input docutils container">
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span> Distribución de normalidad para: ingreso_anual
+    Estadístico: 0.4072, p-valor: 0.00
+ Distribución no normal
 </pre></div>
 </div>
 </div>
+</div>
+<p>El ingreso anual de los prestatarios, no sigue una distribución normal, con un valor medio de <span class="math notranslate nohighlight">\(74,923\)</span> dólares. Con valores atípicos de prestatarios con ingresos mayores a los <span class="math notranslate nohighlight">\(200,000\)</span>.</p>
+<ul class="simple">
+<li><p><strong>Tipo de vivienda</strong></p></li>
+</ul>
+<div class="cell tag_remove-input docutils container">
+</div>
+<div class="cell tag_remove-input docutils container">
 <div class="cell_output docutils container">
-<img alt="_images/a5aa2c246866ebb1e8d83ea2a251f2b456b71b7fa72047492e23b48265d28008.png" src="_images/a5aa2c246866ebb1e8d83ea2a251f2b456b71b7fa72047492e23b48265d28008.png" />
-<img alt="_images/b23cb69c43b94a76663364d1f571210f0cae94ac1c7033a60f443f4d873b4153.png" src="_images/b23cb69c43b94a76663364d1f571210f0cae94ac1c7033a60f443f4d873b4153.png" />
+<img alt="_images/356ca84c1b4e46194495806728120ddbdfdb6965af5af5de1f3d0b40aa14f347.png" src="_images/356ca84c1b4e46194495806728120ddbdfdb6965af5af5de1f3d0b40aa14f347.png" />
 </div>
 </div>
-<p>📊 Valores típicos de DTI en análisis crediticio
-| Rango de DTI (%) | Interpretación financiera |
-| 0% – 15% | Baja carga financiera. Perfil muy saludable. |
-| 15% – 35% | Carga moderada. Aceptable para la mayoría de créditos. |
-| 35% – 45% | Carga elevada. Riesgo creciente. |
-| &gt; 45% | Alta presión financiera. Riesgo de impago significativo. |</p>
+<div class="cell tag_remove-input docutils container">
+<div class="cell_output docutils container">
+<div class="output text_html"><div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>Categoría</th>
+      <th>Conteo</th>
+      <th>Porcentaje</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>0</th>
+      <td>Hipoteca</td>
+      <td>665579</td>
+      <td>49.47</td>
+    </tr>
+    <tr>
+      <th>1</th>
+      <td>Alquiler</td>
+      <td>534421</td>
+      <td>39.72</td>
+    </tr>
+    <tr>
+      <th>2</th>
+      <td>Propietario</td>
+      <td>144832</td>
+      <td>10.77</td>
+    </tr>
+    <tr>
+      <th>3</th>
+      <td>Cualquiera</td>
+      <td>286</td>
+      <td>0.02</td>
+    </tr>
+    <tr>
+      <th>4</th>
+      <td>Otro</td>
+      <td>144</td>
+      <td>0.01</td>
+    </tr>
+  </tbody>
+</table>
+</div></div></div>
+</div>
+<p>De los prestatarios, en su mayoría tienen una casa con hipoteca (<span class="math notranslate nohighlight">\(49.47\%\)</span>) o en alquiler (<span class="math notranslate nohighlight">\(39.72\%\)</span>), solo un <span class="math notranslate nohighlight">\(10.77\%\)</span> es propietario de su propia casa.</p>
 </section>
 <section id="historial-crediticio">
 <h3>Historial crediticio<a class="headerlink" href="#historial-crediticio" title="Link to this heading">#</a></h3>
-<div class="cell docutils container">
-<div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">df</span><span class="p">[</span><span class="s1">&#39;earliest_cr_line_year&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">dtype</span>
-</pre></div>
-</div>
-</div>
+<ul class="simple">
+<li><p><strong>Promedio FICO</strong></p></li>
+</ul>
+<div class="cell tag_remove-input docutils container">
 <div class="cell_output docutils container">
-<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>dtype(&#39;int64&#39;)
-</pre></div>
+<img alt="_images/f65b29361f9d4f835ad471ba7796e6f352bb47570da82a03ff95a1159176db7c.png" src="_images/f65b29361f9d4f835ad471ba7796e6f352bb47570da82a03ff95a1159176db7c.png" />
 </div>
 </div>
-</div>
-<div class="cell docutils container">
-<div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">years</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="s2">&quot;earliest_cr_line_year&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">dropna</span><span class="p">()</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">int</span><span class="p">)</span>  <span class="c1"># quitamos nulos si los hay</span>
-<span class="n">n</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">years</span><span class="p">)</span>
-<span class="n">k_sturges</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="mi">1</span> <span class="o">+</span> <span class="n">np</span><span class="o">.</span><span class="n">log2</span><span class="p">(</span><span class="n">n</span><span class="p">))</span>
-<span class="c1"># Rango de años</span>
-<span class="n">R</span> <span class="o">=</span> <span class="n">years</span><span class="o">.</span><span class="n">max</span><span class="p">()</span> <span class="o">-</span> <span class="n">years</span><span class="o">.</span><span class="n">min</span><span class="p">()</span>
-<span class="c1"># Amplitud de clase</span>
-<span class="n">h</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">ceil</span><span class="p">(</span><span class="n">R</span> <span class="o">/</span> <span class="n">k_sturges</span><span class="p">))</span>
-<span class="c1"># --- Crear límites de intervalos ---</span>
-<span class="n">min_year</span> <span class="o">=</span> <span class="n">years</span><span class="o">.</span><span class="n">min</span><span class="p">()</span>
-<span class="n">max_year</span> <span class="o">=</span> <span class="n">years</span><span class="o">.</span><span class="n">max</span><span class="p">()</span>
-
-<span class="c1"># Creamos los intervalos</span>
-<span class="c1"># Construimos bordes de clase</span>
-<span class="n">bins</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="n">min_year</span><span class="p">,</span> <span class="n">max_year</span> <span class="o">+</span> <span class="n">h</span><span class="p">,</span> <span class="n">h</span><span class="p">))</span>
-
-<span class="c1"># Tabla de frecuencia agrupada</span>
-<span class="n">tabla</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">cut</span><span class="p">(</span><span class="n">years</span><span class="p">,</span> <span class="n">bins</span><span class="o">=</span><span class="n">bins</span><span class="p">,</span> <span class="n">right</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span><span class="o">.</span><span class="n">value_counts</span><span class="p">()</span><span class="o">.</span><span class="n">sort_index</span><span class="p">()</span>
-
-<span class="n">tabla_frec</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">({</span>
-    <span class="s2">&quot;Intervalo&quot;</span><span class="p">:</span> <span class="p">[</span><span class="sa">f</span><span class="s2">&quot;[</span><span class="si">{</span><span class="nb">int</span><span class="p">(</span><span class="n">interval</span><span class="o">.</span><span class="n">left</span><span class="p">)</span><span class="si">}</span><span class="s2">, </span><span class="si">{</span><span class="nb">int</span><span class="p">(</span><span class="n">interval</span><span class="o">.</span><span class="n">right</span><span class="p">)</span><span class="si">}</span><span class="s2">)&quot;</span> <span class="k">for</span> <span class="n">interval</span> <span class="ow">in</span> <span class="n">tabla</span><span class="o">.</span><span class="n">index</span><span class="p">],</span>
-    <span class="s2">&quot;Frecuencia&quot;</span><span class="p">:</span> <span class="n">tabla</span><span class="o">.</span><span class="n">values</span><span class="p">,</span>
-<span class="p">})</span>
-
-<span class="nb">print</span><span class="p">(</span><span class="n">tabla_frec</span><span class="p">)</span>
-</pre></div>
-</div>
-</div>
+<div class="cell tag_remove-input docutils container">
 <div class="cell_output docutils container">
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>       Intervalo  Frecuencia
-0   [1934, 1938)           1
-1   [1938, 1942)           0
-2   [1942, 1946)           3
-3   [1946, 1950)           5
-4   [1950, 1954)          35
-5   [1954, 1958)          67
-6   [1958, 1962)         282
-7   [1962, 1966)        1031
-8   [1966, 1970)        2774
-9   [1970, 1974)        5640
-10  [1974, 1978)       11464
-11  [1978, 1982)       19963
-12  [1982, 1986)       43478
-13  [1986, 1990)       76800
-14  [1990, 1994)      114967
-15  [1994, 1998)      207722
-16  [1998, 2002)      316779
-17  [2002, 2006)      328422
-18  [2006, 2010)      161384
-19  [2010, 2014)       51679
-20  [2014, 2018)        2814
-</pre></div>
-</div>
-</div>
-</div>
-<div class="cell docutils container">
-<div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">df</span><span class="p">[</span><span class="s2">&quot;year_class&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">cut</span><span class="p">(</span><span class="n">df</span><span class="p">[</span><span class="s2">&quot;earliest_cr_line_year&quot;</span><span class="p">],</span> <span class="n">bins</span><span class="o">=</span><span class="n">bins</span><span class="p">,</span> <span class="n">right</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+<div class="output text_html"><div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
 
-<span class="c1"># --- 2. Agrupar por clase y mes ---</span>
-<span class="n">tabla</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">crosstab</span><span class="p">(</span><span class="n">df</span><span class="p">[</span><span class="s2">&quot;year_class&quot;</span><span class="p">],</span> <span class="n">df</span><span class="p">[</span><span class="s2">&quot;earliest_cr_line_month&quot;</span><span class="p">])</span>
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
 
-<span class="c1"># --- 3. Graficar heatmap ---</span>
-<span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">10</span><span class="p">,</span><span class="mi">6</span><span class="p">))</span>
-<span class="n">sns</span><span class="o">.</span><span class="n">heatmap</span><span class="p">(</span><span class="n">tabla</span><span class="p">,</span> <span class="n">annot</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">fmt</span><span class="o">=</span><span class="s2">&quot;d&quot;</span><span class="p">,</span> <span class="n">cmap</span><span class="o">=</span><span class="s2">&quot;YlGnBu&quot;</span><span class="p">)</span>
-<span class="n">plt</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="s2">&quot;Heatmap: Año (clases) vs Mes&quot;</span><span class="p">)</span>
-<span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s2">&quot;Mes&quot;</span><span class="p">)</span>
-<span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="s2">&quot;Clases de Año&quot;</span><span class="p">)</span>
-<span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
-</pre></div>
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>Variable</th>
+      <th>Mínimo</th>
+      <th>Máximo</th>
+      <th>Media</th>
+      <th>Desviación estándar</th>
+      <th>25%</th>
+      <th>Mediana</th>
+      <th>75%</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>0</th>
+      <td>Promedio_FICO</td>
+      <td>627.0</td>
+      <td>847.5</td>
+      <td>698.185</td>
+      <td>31.853</td>
+      <td>672.0</td>
+      <td>692.0</td>
+      <td>712.0</td>
+    </tr>
+  </tbody>
+</table>
+</div></div></div>
 </div>
-</div>
+<div class="cell tag_remove-input docutils container">
 <div class="cell_output docutils container">
-<img alt="_images/1131900aed5b303b9f906ef4b374884412322c159bad9b1540fd6863be53b8d9.png" src="_images/1131900aed5b303b9f906ef4b374884412322c159bad9b1540fd6863be53b8d9.png" />
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span> Distribución de normalidad para: promedio_fico
+    Estadístico: 0.8881, p-valor: 0.00
+ Distribución no normal
+</pre></div>
 </div>
 </div>
+</div>
+<p>El promedio FICO de los prestatarios, varia entre los 627 a los 847 puntos.</p>
+<ul class="simple">
+<li><p><strong>Total de cuentas de crédito</strong></p></li>
+</ul>
+<div class="cell tag_remove-input docutils container">
+<div class="cell_output docutils container">
+<div class="output text_html"><div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>Intervalo</th>
+      <th>Frecuencia</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>0</th>
+      <td>[2, 11)</td>
+      <td>113302</td>
+    </tr>
+    <tr>
+      <th>1</th>
+      <td>[11, 20)</td>
+      <td>378651</td>
+    </tr>
+    <tr>
+      <th>2</th>
+      <td>[20, 29)</td>
+      <td>404946</td>
+    </tr>
+    <tr>
+      <th>3</th>
+      <td>[29, 38)</td>
+      <td>256281</td>
+    </tr>
+    <tr>
+      <th>4</th>
+      <td>[38, 47)</td>
+      <td>119720</td>
+    </tr>
+    <tr>
+      <th>5</th>
+      <td>[47, 56)</td>
+      <td>46974</td>
+    </tr>
+    <tr>
+      <th>6</th>
+      <td>[56, 65)</td>
+      <td>18050</td>
+    </tr>
+    <tr>
+      <th>7</th>
+      <td>[65, 74)</td>
+      <td>4699</td>
+    </tr>
+    <tr>
+      <th>8</th>
+      <td>[74, 83)</td>
+      <td>1611</td>
+    </tr>
+    <tr>
+      <th>9</th>
+      <td>[83, 92)</td>
+      <td>657</td>
+    </tr>
+  </tbody>
+</table>
+</div></div></div>
+</div>
+<p>La mayoría de prestatarios tiene entre 20 - 29 cuentas de crédito.</p>
+</section>
+<section id="morosidad">
+<h3>Morosidad<a class="headerlink" href="#morosidad" title="Link to this heading">#</a></h3>
+<div class="cell tag_remove-input docutils container">
+</div>
+<div class="cell tag_remove-input docutils container">
+<div class="cell_output docutils container">
+<div class="output text_html"><div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>Categoría</th>
+      <th>Conteo</th>
+      <th>Porcentaje</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>0</th>
+      <td>No tuvo</td>
+      <td>1312034</td>
+      <td>97.53</td>
+    </tr>
+    <tr>
+      <th>1</th>
+      <td>Tuvo</td>
+      <td>33276</td>
+      <td>2.47</td>
+    </tr>
+  </tbody>
+</table>
+</div></div></div>
+</div>
+<p>Solo el <span class="math notranslate nohighlight">\(2.47\%\)</span> tuvo que requerir un acuerdo de pago para su prestamo.</p>
+</section>
+<section id="tecnicas-de-control">
+<h3><strong>Técnicas de control</strong><a class="headerlink" href="#tecnicas-de-control" title="Link to this heading">#</a></h3>
+<ul class="simple">
+<li><p><strong>Distribución de la categoría del crédito</strong></p></li>
+</ul>
+<div class="cell tag_remove-input docutils container">
+<div class="cell_output docutils container">
+<img alt="_images/2012803d834aaa3abffaeeeb4b86c8067f3881efcddbb9193b6054017d378e65.png" src="_images/2012803d834aaa3abffaeeeb4b86c8067f3881efcddbb9193b6054017d378e65.png" />
+</div>
+</div>
+<p>En su mayoría los prestamos otorgados son de categoría B o C, y en menor medida de categoría G.</p>
+<ul class="simple">
+<li><p><strong>Distribución del año - meses de emisión del préstamo</strong></p></li>
+</ul>
+<div class="cell tag_remove-input docutils container">
+</div>
+<div class="cell tag_remove-input docutils container">
+<div class="cell_output docutils container">
+<img alt="_images/35bca02c47b92c3260109582ce4b6c00daf00d065ec1a3d079d6c2eb03ff4bc2.png" src="_images/35bca02c47b92c3260109582ce4b6c00daf00d065ec1a3d079d6c2eb03ff4bc2.png" />
+</div>
+</div>
+<p>En su mayoría los prestamos fueron otorgados entre el 2015. El mes con mayor cantidad de prestamos fue marzo en el periodo 2016 (<span class="math notranslate nohighlight">\(489,937\)</span>).</p>
 </section>
 </section>
 </section>
@@ -1803,20 +1445,20 @@ Passing `palette` without assigning `hue` is deprecated and will be removed in v
                   
 <div class="prev-next-area">
     <a class="left-prev"
-       href="intro.html"
+       href="manejo_dataraw.html"
        title="previous page">
       <i class="fa-solid fa-angle-left"></i>
       <div class="prev-next-info">
         <p class="prev-next-subtitle">previous</p>
-        <p class="prev-next-title">Predicción de prestamos DEFAULT</p>
+        <p class="prev-next-title"><strong>Preprocesamiento de datos</strong></p>
       </div>
     </a>
     <a class="right-next"
-       href="manejo_dataraw.html"
+       href="variables_interes.html"
        title="next page">
       <div class="prev-next-info">
         <p class="prev-next-subtitle">next</p>
-        <p class="prev-next-title"><strong>Preprocesamiento de datos</strong></p>
+        <p class="prev-next-title"><strong>Selección de variables de interés</strong></p>
       </div>
       <i class="fa-solid fa-angle-right"></i>
     </a>
@@ -1836,15 +1478,20 @@ Passing `palette` without assigning `hue` is deprecated and will be removed in v
   </div>
   <nav class="bd-toc-nav page-toc">
     <ul class="visible nav section-nav flex-column">
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#dataset"><strong>1. Dataset</strong></a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#distribucion-de-las-variables-de-estudio"><strong>2. Distribución de las variables de estudio</strong></a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#variable-objetivo">2.1. Variable objetivo</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#valores-faltantes">2.2. Valores faltantes</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#correlacion-de-variables">2.3. Correlación de variables</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#correlacion-de-variables">2.3. Correlación de variables</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#variables-numericas">Variables numéricas</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#variables-categoricas">Variables categóricas</a></li>
+</ul>
+</li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#analisis-por-grupos">2.4 Análisis por grupos</a><ul class="nav section-nav flex-column">
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#informacion-del-prestamo">Información del prestamo</a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#informacion-del-prestadiario">Información del prestadiario</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#informacion-del-prestatario">Información del prestatario</a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#historial-crediticio">Historial crediticio</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#morosidad">Morosidad</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#tecnicas-de-control"><strong>Técnicas de control</strong></a></li>
 </ul>
 </li>
 </ul>
