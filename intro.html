@@ -57,10 +57,12 @@
     <script async="async" src="_static/sphinx-thebe.js?v=c100c467"></script>
     <script>var togglebuttonSelector = '.toggle, .admonition.dropdown';</script>
     <script>const THEBE_JS_URL = "https://unpkg.com/thebe@0.8.2/lib/index.js"; const thebe_selector = ".thebe,.cell"; const thebe_selector_input = "pre"; const thebe_selector_output = ".output, .cell_output"</script>
+    <script>window.MathJax = {"options": {"processHtmlClass": "tex2jax_process|mathjax_process|math|output_area"}}</script>
+    <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
     <script>DOCUMENTATION_OPTIONS.pagename = 'intro';</script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
-    <link rel="next" title="Análisis exploratorio de datos" href="EDA.html" />
+    <link rel="next" title="Preprocesamiento de datos" href="manejo_dataraw.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
   </head>
@@ -175,11 +177,10 @@
             </li>
         </ul>
         <ul class="nav bd-sidenav">
-<li class="toctree-l1"><a class="reference internal" href="EDA.html"><strong>Análisis exploratorio de datos</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="manejo_dataraw.html"><strong>Preprocesamiento de datos</strong></a></li>
-<li class="toctree-l1"><a class="reference internal" href="scklearn.html">Modelo con sklearn</a></li>
-
-
+<li class="toctree-l1"><a class="reference internal" href="EDA.html"><strong>Análisis exploratorio de datos</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="variables_interes.html"><strong>Selección de variables de interés</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="scklearn.html"><strong>Modelo MLP con <code class="docutils literal notranslate"><span class="pre">sklearn</span></code></strong></a></li>
 </ul>
 
     </div>
@@ -375,7 +376,7 @@ document.write(`
             </div>
             <nav aria-label="Page">
                 <ul class="visible nav section-nav flex-column">
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#leadind-club"><strong>Leadind Club</strong></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#leading-club"><strong>Leading Club</strong></a></li>
 </ul>
             </nav>
         </div>
@@ -390,19 +391,17 @@ document.write(`
   <section class="tex2jax_ignore mathjax_ignore" id="prediccion-de-prestamos-default">
 <h1>Predicción de prestamos DEFAULT<a class="headerlink" href="#prediccion-de-prestamos-default" title="Link to this heading">#</a></h1>
 <p>Este sample book presenta la implementación de un modelo de red neuronal multicapa, el cual tiene el objetivo de predecir si un préstamo será un default o pagado en su totalidad.</p>
-<p>El dataset usado está disponible en: [], el cual reúne los registros históricos de la empresa Lending Club del año 2007 - 2018.</p>
-<section id="leadind-club">
-<h2><strong>Leadind Club</strong><a class="headerlink" href="#leadind-club" title="Link to this heading">#</a></h2>
-<ul class="simple">
-<li><p>Definición de la empresa</p></li>
-</ul>
+<p>El dataset reúne los registros históricos de la empresa Lending Club.</p>
+<section id="leading-club">
+<h2><strong>Leading Club</strong><a class="headerlink" href="#leading-club" title="Link to this heading">#</a></h2>
+<p>Es una compañía estadounidense de préstamo entre particulares, con sede en San Francisco (California).</p>
+<p>Lending club permite a sus prestatarios crear listas de préstamos en su página web aportando datos de ellos mismos y de los préstamos que les gustaría obtener. Todos los préstamos son préstamos a particulares no asegurados que pueden rondar entre 1.000 y 35.000 dólares. En función de la puntuación de crédito del prestatario, el historial de crédito, de la cantidad solicitada y del ratio entre ingresos y gastos del prestatario, Lending Club determina si el prestatario es digno de confianza y asigna a los préstamos que son aprobados un grado de crédito que determina la tasas y el tipo de interés a pagar.</p>
 <div class="toctree-wrapper compound">
 <ul>
-<li class="toctree-l1"><a class="reference internal" href="EDA.html"><strong>Análisis exploratorio de datos</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="manejo_dataraw.html"><strong>Preprocesamiento de datos</strong></a></li>
-<li class="toctree-l1"><a class="reference internal" href="scklearn.html">Modelo con sklearn</a></li>
-<li class="toctree-l1"><a class="reference internal" href="scklearn.html#el-dataset">EL dataset</a></li>
-<li class="toctree-l1"><a class="reference internal" href="scklearn.html#mlp">MLP</a></li>
+<li class="toctree-l1"><a class="reference internal" href="EDA.html"><strong>Análisis exploratorio de datos</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="variables_interes.html"><strong>Selección de variables de interés</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="scklearn.html"><strong>Modelo MLP con <code class="docutils literal notranslate"><span class="pre">sklearn</span></code></strong></a></li>
 </ul>
 </div>
 </section>
@@ -439,11 +438,11 @@ document.write(`
                   
 <div class="prev-next-area">
     <a class="right-next"
-       href="EDA.html"
+       href="manejo_dataraw.html"
        title="next page">
       <div class="prev-next-info">
         <p class="prev-next-subtitle">next</p>
-        <p class="prev-next-title"><strong>Análisis exploratorio de datos</strong></p>
+        <p class="prev-next-title"><strong>Preprocesamiento de datos</strong></p>
       </div>
       <i class="fa-solid fa-angle-right"></i>
     </a>
@@ -463,7 +462,7 @@ document.write(`
   </div>
   <nav class="bd-toc-nav page-toc">
     <ul class="visible nav section-nav flex-column">
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#leadind-club"><strong>Leadind Club</strong></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#leading-club"><strong>Leading Club</strong></a></li>
 </ul>
   </nav></div>
 
