@@ -62,6 +62,7 @@
     <script>DOCUMENTATION_OPTIONS.pagename = 'scklearn';</script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Modelo MLP con PySpark" href="MyPySpark.html" />
     <link rel="prev" title="Selección de variables de interés" href="variables_interes.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
@@ -179,6 +180,8 @@
 <li class="toctree-l1"><a class="reference internal" href="EDA.html"><strong>Análisis exploratorio de datos</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="variables_interes.html"><strong>Selección de variables de interés</strong></a></li>
 <li class="toctree-l1 current active"><a class="current reference internal" href="#"><strong>Modelo MLP con <code class="docutils literal notranslate"><span class="pre">sklearn</span></code></strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="MyPySpark.html"><strong>Modelo MLP con <code class="docutils literal notranslate"><span class="pre">PySpark</span></code></strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="comparative.html"><strong>Análisis comparativo</strong></a></li>
 </ul>
 
     </div>
@@ -374,7 +377,6 @@ document.write(`
             </div>
             <nav aria-label="Page">
                 <ul class="visible nav section-nav flex-column">
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#el-problema">El problema</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#busqueda-de-hiperparametros-con-pythorch">Búsqueda de hiperparámetros con Pythorch</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#gridsearch-con-hiperparametros">GridSearch con hiperparámetros</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#explicabilidad-con-lime">Explicabilidad con Lime</a></li>
@@ -392,30 +394,18 @@ document.write(`
   <section class="tex2jax_ignore mathjax_ignore" id="modelo-mlp-con-sklearn">
 <h1><strong>Modelo MLP con <code class="docutils literal notranslate"><span class="pre">sklearn</span></code></strong><a class="headerlink" href="#modelo-mlp-con-sklearn" title="Link to this heading">#</a></h1>
 <hr class="docutils" />
-<section id="el-problema">
-<h2>El problema<a class="headerlink" href="#el-problema" title="Link to this heading">#</a></h2>
-<p>El objetivo es predecir si un préstamo emitido resultará en <code class="docutils literal notranslate"><span class="pre">default(1)</span></code> o <code class="docutils literal notranslate"><span class="pre">pagado(0)</span></code>.</p>
-<p>Se quiere identificar correctamente cuales son los prestatarios que van a incumplir con el pago de su préstamo.</p>
-<p>Queremos reducir el error de costo y los errores <strong>FALSE NEGATIVE</strong>, los casos en que se predice que NO incumplirán, pero si incumplen. Este es el error más costoso para los bancos, ya que se presta dinero a un prestatario que no va a pagar.</p>
-<p>Para el modelo realizamos estandarización <code class="docutils literal notranslate"><span class="pre">StandardScaler</span></code> de las variables numéricas y codificación <code class="docutils literal notranslate"><span class="pre">OneHotEncoder</span></code> para las variables categóricas.</p>
-<p>Se dividió el dataset de datos de manera estratificada (80-20).</p>
-<p>Aplicamos <code class="docutils literal notranslate"><span class="pre">SMOTE</span></code> para el balanceo de clases en el conjunto de entrenamiento.</p>
-</section>
-<hr class="docutils" />
 <section id="busqueda-de-hiperparametros-con-pythorch">
 <h2>Búsqueda de hiperparámetros con Pythorch<a class="headerlink" href="#busqueda-de-hiperparametros-con-pythorch" title="Link to this heading">#</a></h2>
 <p>Utilizamos la Pythorch para realizar una primera búsqueda de hiperparámetros.</p>
-<div class="cell docutils container">
-<div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># Reproductividad</span>
-<span class="n">SEED</span> <span class="o">=</span> <span class="mi">42</span>
-<span class="n">torch</span><span class="o">.</span><span class="n">manual_seed</span><span class="p">(</span><span class="n">SEED</span><span class="p">)</span>
-<span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">seed</span><span class="p">(</span><span class="n">SEED</span><span class="p">)</span>
-</pre></div>
-</div>
-</div>
-</div>
-<div class="cell docutils container">
+<ul class="simple">
+<li><p>Preprocesamiento</p></li>
+</ul>
+<div class="cell tag_hide-cell docutils container">
+<details class="admonition hide above-input">
+<summary aria-label="Toggle hidden content">
+<p class="collapsed admonition-title">Show code cell content</p>
+<p class="expanded admonition-title">Hide code cell content</p>
+</summary>
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># PREPROCESS</span>
 <span class="c1"># Separar X e y</span>
@@ -445,6 +435,7 @@ document.write(`
 </pre></div>
 </div>
 </div>
+</details>
 </div>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
@@ -493,47 +484,10 @@ document.write(`
 </div>
 </div>
 </div>
-<div class="cell docutils container">
-<div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">best_recall</span> <span class="o">=</span> <span class="mi">0</span>
-<span class="n">best_params</span> <span class="o">=</span> <span class="p">{}</span>
-<span class="n">input_dim</span> <span class="o">=</span> <span class="n">X_train_tensor</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
-
-<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Parámetros: </span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
-<span class="k">for</span> <span class="n">hidden</span> <span class="ow">in</span> <span class="n">param_grid</span><span class="p">[</span><span class="s1">&#39;hidden_layer_sizes&#39;</span><span class="p">]:</span>
-    <span class="k">for</span> <span class="n">alpha</span> <span class="ow">in</span> <span class="n">param_grid</span><span class="p">[</span><span class="s1">&#39;alpha&#39;</span><span class="p">]:</span>
-        <span class="k">for</span> <span class="n">max_iter</span> <span class="ow">in</span> <span class="n">param_grid</span><span class="p">[</span><span class="s1">&#39;max_iter&#39;</span><span class="p">]:</span>
-            <span class="c1"># Modelo</span>
-            <span class="n">model</span> <span class="o">=</span> <span class="n">MLPModel</span><span class="p">(</span><span class="n">input_dim</span><span class="p">,</span> <span class="n">hidden</span><span class="p">)</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="n">device</span><span class="p">)</span>
-            <span class="n">optimizer</span> <span class="o">=</span> <span class="n">optim</span><span class="o">.</span><span class="n">Adam</span><span class="p">(</span><span class="n">model</span><span class="o">.</span><span class="n">parameters</span><span class="p">(),</span> <span class="n">lr</span><span class="o">=</span><span class="mf">0.001</span><span class="p">,</span> <span class="n">weight_decay</span><span class="o">=</span><span class="n">alpha</span><span class="p">)</span>
-            <span class="n">criterion</span> <span class="o">=</span> <span class="n">nn</span><span class="o">.</span><span class="n">BCELoss</span><span class="p">()</span>
-            
-            <span class="c1"># Entrenamiento</span>
-            <span class="n">start_time</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span>
-            <span class="k">for</span> <span class="n">epoch</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">max_iter</span><span class="p">):</span>
-                <span class="n">optimizer</span><span class="o">.</span><span class="n">zero_grad</span><span class="p">()</span>
-                <span class="n">outputs</span> <span class="o">=</span> <span class="n">model</span><span class="p">(</span><span class="n">X_train_tensor</span><span class="p">)</span>
-                <span class="n">loss</span> <span class="o">=</span> <span class="n">criterion</span><span class="p">(</span><span class="n">outputs</span><span class="p">,</span> <span class="n">y_train_tensor</span><span class="p">)</span>
-                <span class="n">loss</span><span class="o">.</span><span class="n">backward</span><span class="p">()</span>
-                <span class="n">optimizer</span><span class="o">.</span><span class="n">step</span><span class="p">()</span>
-            
-            <span class="c1"># Evaluación en test</span>
-            <span class="k">with</span> <span class="n">torch</span><span class="o">.</span><span class="n">no_grad</span><span class="p">():</span>
-                <span class="n">y_pred_prob</span> <span class="o">=</span> <span class="n">model</span><span class="p">(</span><span class="n">X_test_tensor</span><span class="p">)</span><span class="o">.</span><span class="n">cpu</span><span class="p">()</span><span class="o">.</span><span class="n">numpy</span><span class="p">()</span>
-                <span class="n">threshold</span> <span class="o">=</span> <span class="mf">0.3</span>  <span class="c1"># puedes cambiar a 0.2, 0.4, etc.</span>
-                <span class="n">y_pred</span> <span class="o">=</span> <span class="p">(</span><span class="n">y_pred_prob</span> <span class="o">&gt;=</span> <span class="n">threshold</span><span class="p">)</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">int</span><span class="p">)</span>
-                <span class="n">recall</span> <span class="o">=</span> <span class="n">recall_score</span><span class="p">(</span><span class="n">y_test</span><span class="p">,</span> <span class="n">y_pred</span><span class="p">)</span>
-
-            <span class="n">training_time</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span> <span class="o">-</span> <span class="n">start_time</span>
-            
-            <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Hidden:</span><span class="si">{</span><span class="n">hidden</span><span class="si">}</span><span class="s2">, alpha:</span><span class="si">{</span><span class="n">alpha</span><span class="si">}</span><span class="s2">, epochs:</span><span class="si">{</span><span class="n">max_iter</span><span class="si">}</span><span class="s2">, recall:</span><span class="si">{</span><span class="n">recall</span><span class="si">:</span><span class="s2">.4f</span><span class="si">}</span><span class="s2">, Tiempo:</span><span class="si">{</span><span class="n">training_time</span><span class="si">:</span><span class="s2">.2f</span><span class="si">}</span><span class="s2">s&quot;</span><span class="p">)</span>
-            
-            <span class="k">if</span> <span class="n">recall</span> <span class="o">&gt;</span> <span class="n">best_recall</span><span class="p">:</span>
-                <span class="n">best_recall</span><span class="o">=</span> <span class="n">recall</span>
-                <span class="n">best_params</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;hidden_layer_sizes&#39;</span><span class="p">:</span> <span class="n">hidden</span><span class="p">,</span> <span class="s1">&#39;alpha&#39;</span><span class="p">:</span> <span class="n">alpha</span><span class="p">,</span> <span class="s1">&#39;max_iter&#39;</span><span class="p">:</span> <span class="n">max_iter</span><span class="p">}</span>
-</pre></div>
-</div>
-</div>
+<ul class="simple">
+<li><p>Búsqueda de mejores hiperparámetros</p></li>
+</ul>
+<div class="cell tag_remove-input docutils container">
 <div class="cell_output docutils container">
 <div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Parámetros: 
 
@@ -565,7 +519,12 @@ Hidden:[100], alpha:0.01, epochs:200, recall:0.9186, Tiempo:244.51s
 <hr class="docutils" />
 <section id="gridsearch-con-hiperparametros">
 <h2>GridSearch con hiperparámetros<a class="headerlink" href="#gridsearch-con-hiperparametros" title="Link to this heading">#</a></h2>
-<div class="cell docutils container">
+<div class="cell tag_hide-cell docutils container">
+<details class="admonition hide above-input">
+<summary aria-label="Toggle hidden content">
+<p class="collapsed admonition-title">Show code cell content</p>
+<p class="expanded admonition-title">Hide code cell content</p>
+</summary>
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># Separar X e y</span>
 <span class="n">X</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">drop</span><span class="p">(</span><span class="s1">&#39;default&#39;</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
@@ -590,23 +549,9 @@ Hidden:[100], alpha:0.01, epochs:200, recall:0.9186, Tiempo:244.51s
 </pre></div>
 </div>
 </div>
+</details>
 </div>
-<div class="cell docutils container">
-<div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">mlp_pipeline</span> <span class="o">=</span> <span class="n">Pipeline</span><span class="p">([</span>
-    <span class="p">(</span><span class="s1">&#39;preprocessor&#39;</span><span class="p">,</span> <span class="n">preprocessor</span><span class="p">),</span>
-    <span class="p">(</span><span class="s1">&#39;smote&#39;</span><span class="p">,</span> <span class="n">SMOTE</span><span class="p">(</span><span class="n">random_state</span><span class="o">=</span><span class="n">SEED</span><span class="p">)),</span>
-    <span class="p">(</span><span class="s1">&#39;mlp&#39;</span><span class="p">,</span> <span class="n">MLPClassifier</span><span class="p">(</span>
-        <span class="n">solver</span> <span class="o">=</span> <span class="s1">&#39;adam&#39;</span><span class="p">,</span>
-        <span class="n">activation</span> <span class="o">=</span><span class="s1">&#39;relu&#39;</span><span class="p">,</span>
-        <span class="n">max_iter</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span>
-        <span class="n">random_state</span><span class="o">=</span><span class="mi">42</span><span class="p">,</span>
-        <span class="n">verbose</span><span class="o">=</span><span class="kc">True</span><span class="p">))</span>
-<span class="p">])</span>
-<span class="n">mlp_pipeline</span>
-</pre></div>
-</div>
-</div>
+<div class="cell tag_remove-input docutils container">
 <div class="cell_output docutils container">
 <div class="output text_html"><style>#sk-container-id-1 {
   /* Definition of color scheme common for light and dark mode */
@@ -1722,20 +1667,7 @@ document.querySelectorAll('.fa-regular.fa-copy').forEach(function(element) {
 </div>
 </div>
 </div>
-<div class="cell docutils container">
-<div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">start_time</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span>
-<span class="n">grid_search</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">X_train</span><span class="p">,</span> <span class="n">y_train</span><span class="p">)</span>
-<span class="n">training_time</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span> <span class="o">-</span> <span class="n">start_time</span>
-
-<span class="n">best_model</span> <span class="o">=</span> <span class="n">grid_search</span><span class="o">.</span><span class="n">best_estimator_</span>
-
-<span class="c1"># Predicciones</span>
-<span class="n">y_pred</span> <span class="o">=</span> <span class="n">best_model</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span><span class="n">X_test</span><span class="p">)</span>
-<span class="n">y_proba</span> <span class="o">=</span> <span class="n">best_model</span><span class="o">.</span><span class="n">predict_proba</span><span class="p">(</span><span class="n">X_test</span><span class="p">)[:,</span> <span class="mi">1</span><span class="p">]</span>
-</pre></div>
-</div>
-</div>
+<div class="cell tag_remove-input docutils container">
 <div class="cell_output docutils container">
 <div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Fitting 3 folds for each of 4 candidates, totalling 12 fits
 Iteration 1, loss = 0.57014264
@@ -76092,6 +76024,15 @@ weighted avg     0.7983    0.4892    0.5221    269062
         <p class="prev-next-title"><strong>Selección de variables de interés</strong></p>
       </div>
     </a>
+    <a class="right-next"
+       href="MyPySpark.html"
+       title="next page">
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">next</p>
+        <p class="prev-next-title"><strong>Modelo MLP con <code class="docutils literal notranslate"><span class="pre">PySpark</span></code></strong></p>
+      </div>
+      <i class="fa-solid fa-angle-right"></i>
+    </a>
 </div>
                 </footer>
               
@@ -76108,7 +76049,6 @@ weighted avg     0.7983    0.4892    0.5221    269062
   </div>
   <nav class="bd-toc-nav page-toc">
     <ul class="visible nav section-nav flex-column">
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#el-problema">El problema</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#busqueda-de-hiperparametros-con-pythorch">Búsqueda de hiperparámetros con Pythorch</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#gridsearch-con-hiperparametros">GridSearch con hiperparámetros</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#explicabilidad-con-lime">Explicabilidad con Lime</a></li>
