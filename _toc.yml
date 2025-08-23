@@ -7,4 +7,5 @@ chapters:
 - file: EDA
 - file: variables_interes
 - file: scklearn
-
+- file: MyPySpark
+- file: comparative

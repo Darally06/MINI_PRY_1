@@ -1,0 +1,1042 @@
+
+<!DOCTYPE html>
+
+
+<html lang="en" data-content_root="./" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>Modelo MLP con PySpark &#8212; Mini_pyr_1</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "";
+  </script>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="_static/styles/theme.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+<link href="_static/styles/bootstrap.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+<link href="_static/styles/pydata-sphinx-theme.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+
+  
+  <link href="_static/vendor/fontawesome/6.5.2/css/all.min.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+  <link rel="preload" as="font" type="font/woff2" crossorigin href="_static/vendor/fontawesome/6.5.2/webfonts/fa-solid-900.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="_static/vendor/fontawesome/6.5.2/webfonts/fa-brands-400.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="_static/vendor/fontawesome/6.5.2/webfonts/fa-regular-400.woff2" />
+
+    <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=03e43079" />
+    <link rel="stylesheet" type="text/css" href="_static/styles/sphinx-book-theme.css?v=eba8b062" />
+    <link rel="stylesheet" type="text/css" href="_static/togglebutton.css?v=13237357" />
+    <link rel="stylesheet" type="text/css" href="_static/copybutton.css?v=76b2166b" />
+    <link rel="stylesheet" type="text/css" href="_static/mystnb.8ecb98da25f57f5357bf6f572d296f466b2cfe2517ffebfabe82451661e28f02.css?v=6644e6bb" />
+    <link rel="stylesheet" type="text/css" href="_static/sphinx-thebe.css?v=4fa983c6" />
+    <link rel="stylesheet" type="text/css" href="_static/sphinx-design.min.css?v=95c83b7e" />
+  
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="_static/scripts/bootstrap.js?digest=dfe6caa3a7d634c4db9b" />
+<link rel="preload" as="script" href="_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b" />
+  <script src="_static/vendor/fontawesome/6.5.2/js/all.min.js?digest=dfe6caa3a7d634c4db9b"></script>
+
+    <script src="_static/documentation_options.js?v=9eb32ce0"></script>
+    <script src="_static/doctools.js?v=9a2dae69"></script>
+    <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="_static/clipboard.min.js?v=a7894cd8"></script>
+    <script src="_static/copybutton.js?v=f281be69"></script>
+    <script src="_static/scripts/sphinx-book-theme.js?v=887ef09a"></script>
+    <script>let toggleHintShow = 'Click to show';</script>
+    <script>let toggleHintHide = 'Click to hide';</script>
+    <script>let toggleOpenOnPrint = 'true';</script>
+    <script src="_static/togglebutton.js?v=4a39c7ea"></script>
+    <script>var togglebuttonSelector = '.toggle, .admonition.dropdown';</script>
+    <script src="_static/design-tabs.js?v=f930bc37"></script>
+    <script>const THEBE_JS_URL = "https://unpkg.com/thebe@0.8.2/lib/index.js"; const thebe_selector = ".thebe,.cell"; const thebe_selector_input = "pre"; const thebe_selector_output = ".output, .cell_output"</script>
+    <script async="async" src="_static/sphinx-thebe.js?v=c100c467"></script>
+    <script>var togglebuttonSelector = '.toggle, .admonition.dropdown';</script>
+    <script>const THEBE_JS_URL = "https://unpkg.com/thebe@0.8.2/lib/index.js"; const thebe_selector = ".thebe,.cell"; const thebe_selector_input = "pre"; const thebe_selector_output = ".output, .cell_output"</script>
+    <script>DOCUMENTATION_OPTIONS.pagename = 'MyPySpark';</script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Análisis comparativo" href="comparative.html" />
+    <link rel="prev" title="Modelo MLP con sklearn" href="scklearn.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+  </head>
+  
+  
+  <body data-bs-spy="scroll" data-bs-target=".bd-toc-nav" data-offset="180" data-bs-root-margin="0px 0px -60%" data-default-mode="">
+
+  
+  
+  <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Skip to main content</a></div>
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>Back to top</button>
+
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          id="pst-primary-sidebar-checkbox"/>
+  <label class="overlay overlay-primary" for="pst-primary-sidebar-checkbox"></label>
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          id="pst-secondary-sidebar-checkbox"/>
+  <label class="overlay overlay-secondary" for="pst-secondary-sidebar-checkbox"></label>
+  
+  <div class="search-button__wrapper">
+    <div class="search-button__overlay"></div>
+    <div class="search-button__search-container">
+<form class="bd-search d-flex align-items-center"
+      action="search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         id="search-input"
+         placeholder="Search this book..."
+         aria-label="Search this book..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form></div>
+  </div>
+
+  <div class="pst-async-banner-revealer d-none">
+  <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
+</div>
+
+  
+    <header class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+    </header>
+  
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+      <div class="bd-sidebar-primary bd-sidebar">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+    
+    
+  </div>
+  
+    <div class="sidebar-primary-items__start sidebar-primary__section">
+        <div class="sidebar-primary-item">
+
+  
+    
+  
+
+<a class="navbar-brand logo" href="intro.html">
+  
+  
+  
+  
+  
+  
+    <p class="title logo__title">Mini_pyr_1</p>
+  
+</a></div>
+        <div class="sidebar-primary-item">
+
+ <script>
+ document.write(`
+   <button class="btn search-button-field search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass"></i>
+    <span class="search-button__default-text">Search</span>
+    <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+   </button>
+ `);
+ </script></div>
+        <div class="sidebar-primary-item"><nav class="bd-links bd-docs-nav" aria-label="Main">
+    <div class="bd-toc-item navbar-nav active">
+        
+        <ul class="nav bd-sidenav bd-sidenav__home-link">
+            <li class="toctree-l1">
+                <a class="reference internal" href="intro.html">
+                    Predicción de prestamos DEFAULT
+                </a>
+            </li>
+        </ul>
+        <ul class="current nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="manejo_dataraw.html"><strong>Preprocesamiento de datos</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="EDA.html"><strong>Análisis exploratorio de datos</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="variables_interes.html"><strong>Selección de variables de interés</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="scklearn.html"><strong>Modelo MLP con <code class="docutils literal notranslate"><span class="pre">sklearn</span></code></strong></a></li>
+<li class="toctree-l1 current active"><a class="current reference internal" href="#"><strong>Modelo MLP con <code class="docutils literal notranslate"><span class="pre">PySpark</span></code></strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="comparative.html"><strong>Análisis comparativo</strong></a></li>
+</ul>
+
+    </div>
+</nav></div>
+    </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+  </div>
+  
+  <div id="rtd-footer-container"></div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main" role="main">
+        
+        
+
+<div class="sbt-scroll-pixel-helper"></div>
+
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article d-print-none">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item"><button class="sidebar-toggle primary-toggle btn btn-sm" title="Toggle primary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <span class="fa-solid fa-bars"></span>
+</button></div>
+      
+    </div>
+  
+  
+    <div class="header-article-items__end">
+      
+        <div class="header-article-item">
+
+<div class="article-header-buttons">
+
+
+
+
+
+<div class="dropdown dropdown-source-buttons">
+  <button class="btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Source repositories">
+    <i class="fab fa-github"></i>
+  </button>
+  <ul class="dropdown-menu">
+      
+      
+      
+      <li><a href="https://github.com/Darally06/MINI_PRY_1.git" target="_blank"
+   class="btn btn-sm btn-source-repository-button dropdown-item"
+   title="Source repository"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fab fa-github"></i>
+  </span>
+<span class="btn__text-container">Repository</span>
+</a>
+</li>
+      
+      
+      
+      
+      <li><a href="https://github.com/Darally06/MINI_PRY_1.git/issues/new?title=Issue%20on%20page%20%2FMyPySpark.html&body=Your%20issue%20content%20here." target="_blank"
+   class="btn btn-sm btn-source-issues-button dropdown-item"
+   title="Open an issue"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-lightbulb"></i>
+  </span>
+<span class="btn__text-container">Open issue</span>
+</a>
+</li>
+      
+  </ul>
+</div>
+
+
+
+
+
+
+<div class="dropdown dropdown-download-buttons">
+  <button class="btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Download this page">
+    <i class="fas fa-download"></i>
+  </button>
+  <ul class="dropdown-menu">
+      
+      
+      
+      <li><a href="_sources/MyPySpark.ipynb" target="_blank"
+   class="btn btn-sm btn-download-source-button dropdown-item"
+   title="Download source file"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-file"></i>
+  </span>
+<span class="btn__text-container">.ipynb</span>
+</a>
+</li>
+      
+      
+      
+      
+      <li>
+<button onclick="window.print()"
+  class="btn btn-sm btn-download-pdf-button dropdown-item"
+  title="Print to PDF"
+  data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-file-pdf"></i>
+  </span>
+<span class="btn__text-container">.pdf</span>
+</button>
+</li>
+      
+  </ul>
+</div>
+
+
+
+
+<button onclick="toggleFullScreen()"
+  class="btn btn-sm btn-fullscreen-button"
+  title="Fullscreen mode"
+  data-bs-placement="bottom" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-expand"></i>
+  </span>
+
+</button>
+
+
+
+<script>
+document.write(`
+  <button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button" title="light/dark" aria-label="light/dark" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="theme-switch fa-solid fa-sun fa-lg" data-mode="light"></i>
+    <i class="theme-switch fa-solid fa-moon fa-lg" data-mode="dark"></i>
+    <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"></i>
+  </button>
+`);
+</script>
+
+
+<script>
+document.write(`
+  <button class="btn btn-sm pst-navbar-icon search-button search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass fa-lg"></i>
+  </button>
+`);
+</script>
+<button class="sidebar-toggle secondary-toggle btn btn-sm" title="Toggle secondary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <span class="fa-solid fa-list"></span>
+</button>
+</div></div>
+      
+    </div>
+  
+</div>
+</div>
+              
+              
+
+<div id="jb-print-docs-body" class="onlyprint">
+    <h1>Modelo MLP con PySpark</h1>
+    <!-- Table of contents -->
+    <div id="print-main-content">
+        <div id="jb-print-toc">
+            
+            <div>
+                <h2> Contents </h2>
+            </div>
+            <nav aria-label="Page">
+                <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#funciones-de-evaluacion">Funciones de evaluación</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#encontrar-los-mejores-hiperparametros">Encontrar los mejores hiperparámetros</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#mlp-con-los-mejores-hiperparametros">MLP con los mejores hiperparámetros</a></li>
+</ul>
+            </nav>
+        </div>
+    </div>
+</div>
+
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
+  <section class="tex2jax_ignore mathjax_ignore" id="modelo-mlp-con-pyspark">
+<h1><strong>Modelo MLP con <code class="docutils literal notranslate"><span class="pre">PySpark</span></code></strong><a class="headerlink" href="#modelo-mlp-con-pyspark" title="Link to this heading">#</a></h1>
+<section id="funciones-de-evaluacion">
+<h2>Funciones de evaluación<a class="headerlink" href="#funciones-de-evaluacion" title="Link to this heading">#</a></h2>
+</section>
+<section id="encontrar-los-mejores-hiperparametros">
+<h2>Encontrar los mejores hiperparámetros<a class="headerlink" href="#encontrar-los-mejores-hiperparametros" title="Link to this heading">#</a></h2>
+<p>Uso de CrossValidation de 3 folds.
+Se utilizo el 10% de la data dispobible.</p>
+<p>La metrica de evaluación fue <code class="docutils literal notranslate"><span class="pre">areaUnderPR</span></code>: ‘area bajo la curva presición recall.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># 🔹 Lectura de datos [10% de los datos]</span>
+<span class="n">df</span> <span class="o">=</span> <span class="n">spark</span><span class="o">.</span><span class="n">read</span><span class="o">.</span><span class="n">csv</span><span class="p">(</span><span class="s2">&quot;data_to_model.csv&quot;</span><span class="p">,</span> <span class="n">header</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">inferSchema</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="n">df</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">sample</span><span class="p">(</span><span class="n">fraction</span><span class="o">=</span><span class="mf">0.1</span><span class="p">,</span> <span class="n">seed</span><span class="o">=</span><span class="mi">42</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+<ul class="simple">
+<li><p>Configuración inicial</p></li>
+</ul>
+<div class="cell tag_hide-cell docutils container">
+<details class="admonition hide above-input">
+<summary aria-label="Toggle hidden content">
+<p class="collapsed admonition-title">Show code cell content</p>
+<p class="expanded admonition-title">Hide code cell content</p>
+</summary>
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># 🔹 Configuración inicial</span>
+<span class="n">label_col</span> <span class="o">=</span> <span class="s2">&quot;default&quot;</span>
+
+<span class="c1"># Detección automática de columnas</span>
+<span class="n">categorical_cols</span> <span class="o">=</span> <span class="p">[</span>
+    <span class="n">col</span> <span class="k">for</span> <span class="n">col</span> <span class="ow">in</span> <span class="n">df</span><span class="o">.</span><span class="n">columns</span>
+    <span class="k">if</span> <span class="n">df</span><span class="o">.</span><span class="n">schema</span><span class="p">[</span><span class="n">col</span><span class="p">]</span><span class="o">.</span><span class="n">dataType</span><span class="o">.</span><span class="n">typeName</span><span class="p">()</span> <span class="o">==</span> <span class="s1">&#39;string&#39;</span> <span class="ow">and</span> <span class="n">col</span> <span class="o">!=</span> <span class="n">label_col</span><span class="p">]</span>
+<span class="n">numeric_cols</span> <span class="o">=</span> <span class="p">[</span>
+    <span class="n">col</span> <span class="k">for</span> <span class="n">col</span> <span class="ow">in</span> <span class="n">df</span><span class="o">.</span><span class="n">columns</span>
+    <span class="k">if</span> <span class="n">df</span><span class="o">.</span><span class="n">schema</span><span class="p">[</span><span class="n">col</span><span class="p">]</span><span class="o">.</span><span class="n">dataType</span><span class="o">.</span><span class="n">typeName</span><span class="p">()</span> <span class="ow">in</span> <span class="p">[</span><span class="s1">&#39;integer&#39;</span><span class="p">,</span> <span class="s1">&#39;double&#39;</span><span class="p">,</span> <span class="s1">&#39;float&#39;</span><span class="p">]</span> <span class="ow">and</span> <span class="n">col</span> <span class="o">!=</span> <span class="n">label_col</span><span class="p">]</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Variables categóricas: </span><span class="si">{</span><span class="n">categorical_cols</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Variables numéricas: </span><span class="si">{</span><span class="n">numeric_cols</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Variables categóricas: [&#39;motivo_prestamo&#39;, &#39;tipo_vivienda&#39;]
+Variables numéricas: [&#39;monto_aprobado&#39;, &#39;tasa_interes&#39;, &#39;plazo_meses&#39;, &#39;ingreso_anual&#39;, &#39;antiguedad_laboral&#39;, &#39;estado_verif_ingreso&#39;, &#39;promedio_fico&#39;, &#39;anio_apertura_credito&#39;, &#39;cuentas_hipotecarias&#39;, &#39;total_cuentas_credito&#39;, &#39;cuentas_tarjeta_credito&#39;, &#39;saldo_revolvente&#39;, &#39;uso_credito_revolvente&#39;, &#39;limite_credito_total&#39;, &#39;dti&#39;, &#39;meses_ultima_consulta&#39;, &#39;meses_tarjeta_nueva&#39;, &#39;lineas_credito_12m&#39;, &#39;porcentaje_sin_moras&#39;, &#39;moras_2_year&#39;, &#39;monto_total_cobranzas&#39;, &#39;tuvo_acuerdo_pago&#39;, &#39;subcategoria_credito&#39;, &#39;anio_emision_prestamo&#39;, &#39;mes_emision_prestamo&#39;]
+</pre></div>
+</div>
+</div>
+</details>
+</div>
+<ul class="simple">
+<li><p>Preprocesamiento</p></li>
+</ul>
+<div class="cell tag_hide-cell docutils container">
+<details class="admonition hide above-input">
+<summary aria-label="Toggle hidden content">
+<p class="collapsed admonition-title">Show code cell content</p>
+<p class="expanded admonition-title">Hide code cell content</p>
+</summary>
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># 🔹 Preprocesamiento</span>
+
+<span class="c1"># Convertir label a DoubleType y filtrar nulos</span>
+<span class="n">df</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">withColumn</span><span class="p">(</span><span class="s2">&quot;label&quot;</span><span class="p">,</span> <span class="n">F</span><span class="o">.</span><span class="n">col</span><span class="p">(</span><span class="n">label_col</span><span class="p">)</span><span class="o">.</span><span class="n">cast</span><span class="p">(</span><span class="n">DoubleType</span><span class="p">()))</span>\
+       <span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="n">F</span><span class="o">.</span><span class="n">col</span><span class="p">(</span><span class="s2">&quot;label&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">isNotNull</span><span class="p">())</span>
+
+<span class="c1"># Imputación de valores nulos en variables numéricas</span>
+<span class="n">imputer</span> <span class="o">=</span> <span class="n">Imputer</span><span class="p">(</span>
+    <span class="n">inputCols</span><span class="o">=</span><span class="n">numeric_cols</span><span class="p">,</span>
+    <span class="n">outputCols</span><span class="o">=</span><span class="p">[</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">c</span><span class="si">}</span><span class="s2">_imp&quot;</span> <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="n">numeric_cols</span><span class="p">],</span>
+    <span class="n">strategy</span><span class="o">=</span><span class="s2">&quot;median&quot;</span>
+<span class="p">)</span>
+<span class="n">num_imp_cols</span> <span class="o">=</span> <span class="p">[</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">c</span><span class="si">}</span><span class="s2">_imp&quot;</span> <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="n">numeric_cols</span><span class="p">]</span>
+
+<span class="c1"># Indexado y encoding de variables categóricas</span>
+<span class="n">indexers</span> <span class="o">=</span> <span class="p">[</span><span class="n">StringIndexer</span><span class="p">(</span><span class="n">inputCol</span><span class="o">=</span><span class="n">c</span><span class="p">,</span> <span class="n">outputCol</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">c</span><span class="si">}</span><span class="s2">_idx&quot;</span><span class="p">,</span> <span class="n">handleInvalid</span><span class="o">=</span><span class="s2">&quot;keep&quot;</span><span class="p">)</span>
+            <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="n">categorical_cols</span><span class="p">]</span>
+
+<span class="n">encoder</span> <span class="o">=</span> <span class="n">OneHotEncoder</span><span class="p">(</span>
+    <span class="n">inputCols</span><span class="o">=</span><span class="p">[</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">c</span><span class="si">}</span><span class="s2">_idx&quot;</span> <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="n">categorical_cols</span><span class="p">],</span>
+    <span class="n">outputCols</span><span class="o">=</span><span class="p">[</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">c</span><span class="si">}</span><span class="s2">_oh&quot;</span> <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="n">categorical_cols</span><span class="p">]</span>
+<span class="p">)</span>
+<span class="n">ohe_cols</span> <span class="o">=</span> <span class="p">[</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">c</span><span class="si">}</span><span class="s2">_oh&quot;</span> <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="n">categorical_cols</span><span class="p">]</span>
+
+<span class="c1"># Assembler y scaler</span>
+<span class="n">assembler</span> <span class="o">=</span> <span class="n">VectorAssembler</span><span class="p">(</span>
+    <span class="n">inputCols</span><span class="o">=</span><span class="n">num_imp_cols</span> <span class="o">+</span> <span class="n">ohe_cols</span><span class="p">,</span>
+    <span class="n">outputCol</span><span class="o">=</span><span class="s2">&quot;features_raw&quot;</span><span class="p">,</span>
+    <span class="n">handleInvalid</span><span class="o">=</span><span class="s2">&quot;keep&quot;</span>
+<span class="p">)</span>
+
+<span class="n">scaler</span> <span class="o">=</span> <span class="n">StandardScaler</span><span class="p">(</span>
+    <span class="n">inputCol</span><span class="o">=</span><span class="s2">&quot;features_raw&quot;</span><span class="p">,</span>
+    <span class="n">outputCol</span><span class="o">=</span><span class="s2">&quot;features&quot;</span><span class="p">,</span>
+    <span class="n">withStd</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+    <span class="n">withMean</span><span class="o">=</span><span class="kc">True</span>
+<span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</details>
+</div>
+<div class="cell tag_remove-input tag_hide-output docutils container">
+<details class="admonition hide above-output">
+<summary aria-label="Toggle hidden content">
+<p class="collapsed admonition-title">Show code cell outputs</p>
+<p class="expanded admonition-title">Hide code cell outputs</p>
+</summary>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Paso 1: Imputer
+inputCol: input column name. (undefined)
+inputCols: input column names. (current: [&#39;monto_aprobado&#39;, &#39;tasa_interes&#39;, &#39;plazo_meses&#39;, &#39;ingreso_anual&#39;, &#39;antiguedad_laboral&#39;, &#39;estado_verif_ingreso&#39;, &#39;promedio_fico&#39;, &#39;anio_apertura_credito&#39;, &#39;cuentas_hipotecarias&#39;, &#39;total_cuentas_credito&#39;, &#39;cuentas_tarjeta_credito&#39;, &#39;saldo_revolvente&#39;, &#39;uso_credito_revolvente&#39;, &#39;limite_credito_total&#39;, &#39;dti&#39;, &#39;meses_ultima_consulta&#39;, &#39;meses_tarjeta_nueva&#39;, &#39;lineas_credito_12m&#39;, &#39;porcentaje_sin_moras&#39;, &#39;moras_2_year&#39;, &#39;monto_total_cobranzas&#39;, &#39;tuvo_acuerdo_pago&#39;, &#39;subcategoria_credito&#39;, &#39;anio_emision_prestamo&#39;, &#39;mes_emision_prestamo&#39;])
+missingValue: The placeholder for the missing values. All occurrences of missingValue will be imputed. (default: nan)
+outputCol: output column name. (default: Imputer_78adc9146dfc__output)
+outputCols: output column names. (current: [&#39;monto_aprobado_imp&#39;, &#39;tasa_interes_imp&#39;, &#39;plazo_meses_imp&#39;, &#39;ingreso_anual_imp&#39;, &#39;antiguedad_laboral_imp&#39;, &#39;estado_verif_ingreso_imp&#39;, &#39;promedio_fico_imp&#39;, &#39;anio_apertura_credito_imp&#39;, &#39;cuentas_hipotecarias_imp&#39;, &#39;total_cuentas_credito_imp&#39;, &#39;cuentas_tarjeta_credito_imp&#39;, &#39;saldo_revolvente_imp&#39;, &#39;uso_credito_revolvente_imp&#39;, &#39;limite_credito_total_imp&#39;, &#39;dti_imp&#39;, &#39;meses_ultima_consulta_imp&#39;, &#39;meses_tarjeta_nueva_imp&#39;, &#39;lineas_credito_12m_imp&#39;, &#39;porcentaje_sin_moras_imp&#39;, &#39;moras_2_year_imp&#39;, &#39;monto_total_cobranzas_imp&#39;, &#39;tuvo_acuerdo_pago_imp&#39;, &#39;subcategoria_credito_imp&#39;, &#39;anio_emision_prestamo_imp&#39;, &#39;mes_emision_prestamo_imp&#39;])
+relativeError: the relative target precision for the approximate quantile algorithm. Must be in the range [0, 1] (default: 0.001)
+strategy: strategy for imputation. If mean, then replace missing values using the mean value of the feature. If median, then replace missing values using the median value of the feature. If mode, then replace missing using the most frequent value of the feature. (default: mean, current: median)
+--------------------------------------------------
+Paso 2: StringIndexer
+handleInvalid: how to handle invalid data (unseen or NULL values) in features and label column of string type. Options are &#39;skip&#39; (filter out rows with invalid data), error (throw an error), or &#39;keep&#39; (put invalid data in a special additional bucket, at index numLabels). (default: error, current: keep)
+inputCol: input column name. (current: motivo_prestamo)
+inputCols: input column names. (undefined)
+outputCol: output column name. (default: StringIndexer_86a0018c1a2f__output, current: motivo_prestamo_idx)
+outputCols: output column names. (undefined)
+stringOrderType: How to order labels of string column. The first label after ordering is assigned an index of 0. Supported options: frequencyDesc, frequencyAsc, alphabetDesc, alphabetAsc. Default is frequencyDesc. In case of equal frequency when under frequencyDesc/Asc, the strings are further sorted alphabetically (default: frequencyDesc)
+--------------------------------------------------
+Paso 3: StringIndexer
+handleInvalid: how to handle invalid data (unseen or NULL values) in features and label column of string type. Options are &#39;skip&#39; (filter out rows with invalid data), error (throw an error), or &#39;keep&#39; (put invalid data in a special additional bucket, at index numLabels). (default: error, current: keep)
+inputCol: input column name. (current: tipo_vivienda)
+inputCols: input column names. (undefined)
+outputCol: output column name. (default: StringIndexer_8ae65c497324__output, current: tipo_vivienda_idx)
+outputCols: output column names. (undefined)
+stringOrderType: How to order labels of string column. The first label after ordering is assigned an index of 0. Supported options: frequencyDesc, frequencyAsc, alphabetDesc, alphabetAsc. Default is frequencyDesc. In case of equal frequency when under frequencyDesc/Asc, the strings are further sorted alphabetically (default: frequencyDesc)
+--------------------------------------------------
+Paso 4: OneHotEncoder
+dropLast: whether to drop the last category (default: True)
+handleInvalid: How to handle invalid data during transform(). Options are &#39;keep&#39; (invalid data presented as an extra categorical feature) or error (throw an error). Note that this Param is only used during transform; during fitting, invalid data will result in an error. (default: error)
+inputCol: input column name. (undefined)
+inputCols: input column names. (current: [&#39;motivo_prestamo_idx&#39;, &#39;tipo_vivienda_idx&#39;])
+outputCol: output column name. (default: OneHotEncoder_fe8b26c07bd7__output)
+outputCols: output column names. (current: [&#39;motivo_prestamo_oh&#39;, &#39;tipo_vivienda_oh&#39;])
+--------------------------------------------------
+Paso 5: VectorAssembler
+handleInvalid: How to handle invalid data (NULL and NaN values). Options are &#39;skip&#39; (filter out rows with invalid data), &#39;error&#39; (throw an error), or &#39;keep&#39; (return relevant number of NaN in the output). Column lengths are taken from the size of ML Attribute Group, which can be set using `VectorSizeHint` in a pipeline before `VectorAssembler`. Column lengths can also be inferred from first rows of the data since it is safe to do so but only in case of &#39;error&#39; or &#39;skip&#39;). (default: error, current: keep)
+inputCols: input column names. (current: [&#39;monto_aprobado_imp&#39;, &#39;tasa_interes_imp&#39;, &#39;plazo_meses_imp&#39;, &#39;ingreso_anual_imp&#39;, &#39;antiguedad_laboral_imp&#39;, &#39;estado_verif_ingreso_imp&#39;, &#39;promedio_fico_imp&#39;, &#39;anio_apertura_credito_imp&#39;, &#39;cuentas_hipotecarias_imp&#39;, &#39;total_cuentas_credito_imp&#39;, &#39;cuentas_tarjeta_credito_imp&#39;, &#39;saldo_revolvente_imp&#39;, &#39;uso_credito_revolvente_imp&#39;, &#39;limite_credito_total_imp&#39;, &#39;dti_imp&#39;, &#39;meses_ultima_consulta_imp&#39;, &#39;meses_tarjeta_nueva_imp&#39;, &#39;lineas_credito_12m_imp&#39;, &#39;porcentaje_sin_moras_imp&#39;, &#39;moras_2_year_imp&#39;, &#39;monto_total_cobranzas_imp&#39;, &#39;tuvo_acuerdo_pago_imp&#39;, &#39;subcategoria_credito_imp&#39;, &#39;anio_emision_prestamo_imp&#39;, &#39;mes_emision_prestamo_imp&#39;, &#39;motivo_prestamo_oh&#39;, &#39;tipo_vivienda_oh&#39;])
+outputCol: output column name. (default: VectorAssembler_7e60c6b7bbaa__output, current: features_raw)
+--------------------------------------------------
+Paso 6: StandardScaler
+inputCol: input column name. (current: features_raw)
+outputCol: output column name. (default: StandardScaler_d2bc1e77e881__output, current: features)
+withMean: Center data with mean (default: False, current: True)
+withStd: Scale to unit standard deviation (default: True, current: True)
+--------------------------------------------------
+Ajustando pipeline de preprocesamiento...
+[INFO] Dimensión de entrada = 45
+</pre></div>
+</div>
+</div>
+</details>
+</div>
+<div class="cell tag_remove-input docutils container">
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Train size: 107284
+Test size: 26948
+Proporción de clases en train:
++-----+-----+
+|label|count|
++-----+-----+
+|  0.0|85757|
+|  1.0|21527|
++-----+-----+
+
+Proporción de clases en test:
++-----+-----+
+|label|count|
++-----+-----+
+|  0.0|21573|
+|  1.0| 5375|
++-----+-----+
+</pre></div>
+</div>
+</div>
+</div>
+<ul class="simple">
+<li><p>Definición del modelo e hiperparámetros</p></li>
+</ul>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># 🔹 Configurar MLP con Grid Search</span>
+<span class="n">mlp</span> <span class="o">=</span> <span class="n">MultilayerPerceptronClassifier</span><span class="p">(</span>
+    <span class="n">featuresCol</span><span class="o">=</span><span class="s2">&quot;features&quot;</span><span class="p">,</span>
+    <span class="n">labelCol</span><span class="o">=</span><span class="s2">&quot;label&quot;</span><span class="p">,</span>
+    <span class="n">predictionCol</span><span class="o">=</span><span class="s2">&quot;prediction&quot;</span><span class="p">,</span>
+    <span class="n">rawPredictionCol</span><span class="o">=</span><span class="s2">&quot;rawPrediction&quot;</span><span class="p">,</span>
+    <span class="n">maxIter</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span>
+    <span class="n">seed</span><span class="o">=</span><span class="mi">42</span>
+<span class="p">)</span>
+
+<span class="c1"># Definir arquitecturas de red</span>
+<span class="n">layers_options</span> <span class="o">=</span> <span class="p">[</span>
+    <span class="p">[</span><span class="n">input_dim</span><span class="p">,</span> <span class="mi">10</span><span class="p">,</span> <span class="mi">2</span><span class="p">],</span>           <span class="c1"># Simple</span>
+    <span class="p">[</span><span class="n">input_dim</span><span class="p">,</span> <span class="mi">50</span><span class="p">,</span> <span class="mi">2</span><span class="p">],</span>           <span class="c1"># Media</span>
+    <span class="p">[</span><span class="n">input_dim</span><span class="p">,</span> <span class="mi">100</span><span class="p">,</span> <span class="mi">2</span><span class="p">],</span>          <span class="c1"># Grande</span>
+<span class="p">]</span>
+
+<span class="c1"># Definir la malla de parámetros</span>
+<span class="n">paramGrid</span> <span class="o">=</span> <span class="n">ParamGridBuilder</span><span class="p">()</span> \
+    <span class="o">.</span><span class="n">addGrid</span><span class="p">(</span><span class="n">mlp</span><span class="o">.</span><span class="n">layers</span><span class="p">,</span> <span class="n">layers_options</span><span class="p">)</span> \
+    <span class="o">.</span><span class="n">addGrid</span><span class="p">(</span><span class="n">mlp</span><span class="o">.</span><span class="n">stepSize</span><span class="p">,</span> <span class="p">[</span><span class="mf">0.1</span><span class="p">,</span> <span class="mf">0.01</span><span class="p">,</span> <span class="mf">0.001</span><span class="p">])</span>\
+    <span class="o">.</span><span class="n">build</span><span class="p">()</span>
+
+<span class="c1"># Configurar evaluador</span>
+<span class="n">evaluator</span> <span class="o">=</span> <span class="n">BinaryClassificationEvaluator</span><span class="p">(</span>
+    <span class="n">labelCol</span><span class="o">=</span><span class="s2">&quot;label&quot;</span><span class="p">,</span>
+    <span class="n">rawPredictionCol</span><span class="o">=</span><span class="s2">&quot;rawPrediction&quot;</span><span class="p">,</span>
+    <span class="n">metricName</span><span class="o">=</span><span class="s2">&quot;areaUnderPR&quot;</span>  <span class="c1"># Usamos PR por desbalance de datos</span>
+<span class="p">)</span>
+
+<span class="c1"># Configurar CrossValidator</span>
+<span class="n">crossval</span> <span class="o">=</span> <span class="n">CrossValidator</span><span class="p">(</span>
+    <span class="n">estimator</span><span class="o">=</span><span class="n">mlp</span><span class="p">,</span>
+    <span class="n">estimatorParamMaps</span><span class="o">=</span><span class="n">paramGrid</span><span class="p">,</span>
+    <span class="n">evaluator</span><span class="o">=</span><span class="n">evaluator</span><span class="p">,</span>
+    <span class="n">numFolds</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span>
+    <span class="n">seed</span><span class="o">=</span><span class="mi">42</span><span class="p">,</span>
+    <span class="n">collectSubModels</span><span class="o">=</span><span class="kc">False</span>
+<span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell tag_remove-input docutils container">
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Iniciando grid search...
+Tiempo de entrenamiento: 3738.77 segundos
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell tag_remove-input docutils container">
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>══════════════════════════════════════════════════
+MEJORES PARÁMETROS ENCONTRADOS
+══════════════════════════════════════════════════
+layers         : [45, 10, 2]
+stepSize       : 0.1
+maxIter        : 100
+blockSize      : 128
+solver         : l-bfgs
+
+══════════════════════════════════════════════════
+OTROS PARÁMETROS
+══════════════════════════════════════════════════
+featuresCol    : features
+labelCol       : label
+predictionCol  : prediction
+probabilityCol : probability
+rawPredictionCol: rawPrediction
+seed           : 42
+tol            : 1e-06
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell tag_remove-input docutils container">
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Evaluando modelo con métricas
+
+════════════════════════════════════════════════════════════════════════════════
+RENDIMIENTO DEL MEJOR MODELO - MÉTRICAS COMPLETAS
+════════════════════════════════════════════════════════════════════════════════
+Métrica         Train      Test       Diferencia  
+────────────────────────────────────────────────────────────────────────────────
+AUC_ROC         0.7504    0.7389    0.0115
+AUC_PR          0.5129    0.4935    0.0195
+F1              0.7834    0.7804    0.0030
+Precision       0.8194    0.8123    0.0071
+Recall          0.8274    0.8251    0.0023
+Accuracy        0.8274    0.8251    0.0023
+════════════════════════════════════════════════════════════════════════════════
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell tag_remove-input docutils container">
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>MATRIZ DE CONFUSIÓN
+════════════════════════════════════════
+Actual \ Predicted |  0  |  1  |
+-------------------|-----|-----|
+        0          |21224| 349 |
+-------------------|-----|-----|
+        1          |4364 |1011 |
+-------------------|-----|-----|
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell tag_remove-input docutils container">
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>MÉTRICAS CALCULADAS DIRECTAMENTE DESDE SPARK:
+ class_0: Precision=0.8295, Recall=0.9838, F1=0.9001
+ class_1: Precision=0.7434, Recall=0.1881, F1=0.3002
+
+ Matriz de Confusión:
+True Negatives (TN):  21224
+False Positives (FP): 349
+False Negatives (FN): 4364
+True Positives (TP):  1011
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell tag_remove-input docutils container">
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span> ANÁLISIS DE OVERFITTING:
+✅ AUC_ROC: Buen generalización (Diff = 0.0115)
+✅ AUC_PR: Buen generalización (Diff = 0.0195)
+✅ F1: Buen generalización (Diff = 0.0030)
+✅ Precision: Buen generalización (Diff = 0.0071)
+✅ Recall: Buen generalización (Diff = 0.0023)
+✅ Accuracy: Buen generalización (Diff = 0.0023)
+</pre></div>
+</div>
+</div>
+</div>
+<p>Los resultados del grid search indican que se ha encontrado un modelo con buen rendimiento y excelente capacidad de generalización. La estructura de red neuronal [45, 10, 2] con el optimizador L-BFGS y parámetros específicos (stepSize: 0.1, maxIter: 100) logra un equilibrio óptimo entre aprendizaje y generalización, como evidencia la mínima diferencia entre las métricas de entrenamiento y prueba (todas por debajo del 2%).</p>
+<p>El AUC-ROC de 0.7389 en test demuestra una capacidad aceptable de discriminación entre clases, mientras que el accuracy del 82.51% refleja una precisión general sólida del modelo.</p>
+<p>Sin embargo, el análisis detallado revela un desbalance significativo en el rendimiento por clases. Mientras la clase 0 muestra excelentes métricas (Precision: 0.8295, Recall: 0.9838), la clase 1 presenta un recall muy bajo (0.1881), indicando que el modelo identifica correctamente solo el 18.81% de los casos positivos reales.</p>
+<p>Esta disparidad, evidente en la matriz de confusión con 4364 falsos negativos frente a solo 1011 verdaderos positivos, sugiere que el modelo tiene tendencia a predecir la clase mayoritaria.</p>
+</section>
+<hr class="docutils" />
+<section id="mlp-con-los-mejores-hiperparametros">
+<h2>MLP con los mejores hiperparámetros<a class="headerlink" href="#mlp-con-los-mejores-hiperparametros" title="Link to this heading">#</a></h2>
+<ul class="simple">
+<li><p>Uso de todos los registros</p></li>
+</ul>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># 🔹 Lectura de datos [100% de los registros]</span>
+<span class="n">full_data</span> <span class="o">=</span> <span class="n">spark</span><span class="o">.</span><span class="n">read</span><span class="o">.</span><span class="n">csv</span><span class="p">(</span><span class="s2">&quot;data_to_model.csv&quot;</span><span class="p">,</span> <span class="n">header</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">inferSchema</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell tag_remove-input tag_hide-output docutils container">
+<details class="admonition hide above-output">
+<summary aria-label="Toggle hidden content">
+<p class="collapsed admonition-title">Show code cell outputs</p>
+<p class="expanded admonition-title">Hide code cell outputs</p>
+</summary>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Paso 1: Imputer
+inputCol: input column name. (undefined)
+inputCols: input column names. (current: [&#39;monto_aprobado&#39;, &#39;tasa_interes&#39;, &#39;plazo_meses&#39;, &#39;ingreso_anual&#39;, &#39;antiguedad_laboral&#39;, &#39;estado_verif_ingreso&#39;, &#39;promedio_fico&#39;, &#39;anio_apertura_credito&#39;, &#39;cuentas_hipotecarias&#39;, &#39;total_cuentas_credito&#39;, &#39;cuentas_tarjeta_credito&#39;, &#39;saldo_revolvente&#39;, &#39;uso_credito_revolvente&#39;, &#39;limite_credito_total&#39;, &#39;dti&#39;, &#39;meses_ultima_consulta&#39;, &#39;meses_tarjeta_nueva&#39;, &#39;lineas_credito_12m&#39;, &#39;porcentaje_sin_moras&#39;, &#39;moras_2_year&#39;, &#39;monto_total_cobranzas&#39;, &#39;tuvo_acuerdo_pago&#39;, &#39;subcategoria_credito&#39;, &#39;anio_emision_prestamo&#39;, &#39;mes_emision_prestamo&#39;])
+missingValue: The placeholder for the missing values. All occurrences of missingValue will be imputed. (default: nan)
+outputCol: output column name. (default: Imputer_b4c2aa4cccf0__output)
+outputCols: output column names. (current: [&#39;monto_aprobado_imp&#39;, &#39;tasa_interes_imp&#39;, &#39;plazo_meses_imp&#39;, &#39;ingreso_anual_imp&#39;, &#39;antiguedad_laboral_imp&#39;, &#39;estado_verif_ingreso_imp&#39;, &#39;promedio_fico_imp&#39;, &#39;anio_apertura_credito_imp&#39;, &#39;cuentas_hipotecarias_imp&#39;, &#39;total_cuentas_credito_imp&#39;, &#39;cuentas_tarjeta_credito_imp&#39;, &#39;saldo_revolvente_imp&#39;, &#39;uso_credito_revolvente_imp&#39;, &#39;limite_credito_total_imp&#39;, &#39;dti_imp&#39;, &#39;meses_ultima_consulta_imp&#39;, &#39;meses_tarjeta_nueva_imp&#39;, &#39;lineas_credito_12m_imp&#39;, &#39;porcentaje_sin_moras_imp&#39;, &#39;moras_2_year_imp&#39;, &#39;monto_total_cobranzas_imp&#39;, &#39;tuvo_acuerdo_pago_imp&#39;, &#39;subcategoria_credito_imp&#39;, &#39;anio_emision_prestamo_imp&#39;, &#39;mes_emision_prestamo_imp&#39;])
+relativeError: the relative target precision for the approximate quantile algorithm. Must be in the range [0, 1] (default: 0.001)
+strategy: strategy for imputation. If mean, then replace missing values using the mean value of the feature. If median, then replace missing values using the median value of the feature. If mode, then replace missing using the most frequent value of the feature. (default: mean, current: median)
+--------------------------------------------------
+Paso 2: StringIndexer
+handleInvalid: how to handle invalid data (unseen or NULL values) in features and label column of string type. Options are &#39;skip&#39; (filter out rows with invalid data), error (throw an error), or &#39;keep&#39; (put invalid data in a special additional bucket, at index numLabels). (default: error, current: keep)
+inputCol: input column name. (current: motivo_prestamo)
+inputCols: input column names. (undefined)
+outputCol: output column name. (default: StringIndexer_dac6857c81bf__output, current: motivo_prestamo_idx)
+outputCols: output column names. (undefined)
+stringOrderType: How to order labels of string column. The first label after ordering is assigned an index of 0. Supported options: frequencyDesc, frequencyAsc, alphabetDesc, alphabetAsc. Default is frequencyDesc. In case of equal frequency when under frequencyDesc/Asc, the strings are further sorted alphabetically (default: frequencyDesc)
+--------------------------------------------------
+Paso 3: StringIndexer
+handleInvalid: how to handle invalid data (unseen or NULL values) in features and label column of string type. Options are &#39;skip&#39; (filter out rows with invalid data), error (throw an error), or &#39;keep&#39; (put invalid data in a special additional bucket, at index numLabels). (default: error, current: keep)
+inputCol: input column name. (current: tipo_vivienda)
+inputCols: input column names. (undefined)
+outputCol: output column name. (default: StringIndexer_8ebb3279606d__output, current: tipo_vivienda_idx)
+outputCols: output column names. (undefined)
+stringOrderType: How to order labels of string column. The first label after ordering is assigned an index of 0. Supported options: frequencyDesc, frequencyAsc, alphabetDesc, alphabetAsc. Default is frequencyDesc. In case of equal frequency when under frequencyDesc/Asc, the strings are further sorted alphabetically (default: frequencyDesc)
+--------------------------------------------------
+Paso 4: OneHotEncoder
+dropLast: whether to drop the last category (default: True)
+handleInvalid: How to handle invalid data during transform(). Options are &#39;keep&#39; (invalid data presented as an extra categorical feature) or error (throw an error). Note that this Param is only used during transform; during fitting, invalid data will result in an error. (default: error)
+inputCol: input column name. (undefined)
+inputCols: input column names. (current: [&#39;motivo_prestamo_idx&#39;, &#39;tipo_vivienda_idx&#39;])
+outputCol: output column name. (default: OneHotEncoder_86f37fb340dd__output)
+outputCols: output column names. (current: [&#39;motivo_prestamo_oh&#39;, &#39;tipo_vivienda_oh&#39;])
+--------------------------------------------------
+Paso 5: VectorAssembler
+handleInvalid: How to handle invalid data (NULL and NaN values). Options are &#39;skip&#39; (filter out rows with invalid data), &#39;error&#39; (throw an error), or &#39;keep&#39; (return relevant number of NaN in the output). Column lengths are taken from the size of ML Attribute Group, which can be set using `VectorSizeHint` in a pipeline before `VectorAssembler`. Column lengths can also be inferred from first rows of the data since it is safe to do so but only in case of &#39;error&#39; or &#39;skip&#39;). (default: error, current: keep)
+inputCols: input column names. (current: [&#39;monto_aprobado_imp&#39;, &#39;tasa_interes_imp&#39;, &#39;plazo_meses_imp&#39;, &#39;ingreso_anual_imp&#39;, &#39;antiguedad_laboral_imp&#39;, &#39;estado_verif_ingreso_imp&#39;, &#39;promedio_fico_imp&#39;, &#39;anio_apertura_credito_imp&#39;, &#39;cuentas_hipotecarias_imp&#39;, &#39;total_cuentas_credito_imp&#39;, &#39;cuentas_tarjeta_credito_imp&#39;, &#39;saldo_revolvente_imp&#39;, &#39;uso_credito_revolvente_imp&#39;, &#39;limite_credito_total_imp&#39;, &#39;dti_imp&#39;, &#39;meses_ultima_consulta_imp&#39;, &#39;meses_tarjeta_nueva_imp&#39;, &#39;lineas_credito_12m_imp&#39;, &#39;porcentaje_sin_moras_imp&#39;, &#39;moras_2_year_imp&#39;, &#39;monto_total_cobranzas_imp&#39;, &#39;tuvo_acuerdo_pago_imp&#39;, &#39;subcategoria_credito_imp&#39;, &#39;anio_emision_prestamo_imp&#39;, &#39;mes_emision_prestamo_imp&#39;, &#39;motivo_prestamo_oh&#39;, &#39;tipo_vivienda_oh&#39;])
+outputCol: output column name. (default: VectorAssembler_230d91db8e0a__output, current: features_raw)
+--------------------------------------------------
+Paso 6: StandardScaler
+inputCol: input column name. (current: features_raw)
+outputCol: output column name. (default: StandardScaler_8399a487e431__output, current: features)
+withMean: Center data with mean (default: False, current: True)
+withStd: Scale to unit standard deviation (default: True, current: True)
+--------------------------------------------------
+Ajustando pipeline de preprocesamiento...
+Dimensión de entrada = 45
+</pre></div>
+</div>
+</div>
+</details>
+</div>
+<div class="cell tag_remove-input docutils container">
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Train size: 1076425
+Test size: 268885
+Proporción de clases en train:
++-----+------+
+|label| count|
++-----+------+
+|  0.0|861332|
+|  1.0|215093|
++-----+------+
+
+Proporción de clases en test:
++-----+------+
+|label| count|
++-----+------+
+|  0.0|215419|
+|  1.0| 53466|
++-----+------+
+</pre></div>
+</div>
+</div>
+</div>
+<ul class="simple">
+<li><p><strong>Modelo MLP</strong></p></li>
+</ul>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># 🔹 Configurar modelo con los mejores hiperparámetros</span>
+<span class="n">final_mlp</span> <span class="o">=</span> <span class="n">MultilayerPerceptronClassifier</span><span class="p">(</span>
+    <span class="n">featuresCol</span><span class="o">=</span><span class="s2">&quot;features&quot;</span><span class="p">,</span>
+    <span class="n">labelCol</span><span class="o">=</span><span class="s2">&quot;label&quot;</span><span class="p">,</span>
+    <span class="n">predictionCol</span><span class="o">=</span><span class="s2">&quot;prediction&quot;</span><span class="p">,</span>
+    <span class="n">rawPredictionCol</span><span class="o">=</span><span class="s2">&quot;rawPrediction&quot;</span><span class="p">,</span>
+    <span class="n">layers</span><span class="o">=</span><span class="p">[</span><span class="mi">45</span><span class="p">,</span> <span class="mi">10</span><span class="p">,</span> <span class="mi">2</span><span class="p">],</span>      <span class="c1"># Mejores parámetros</span>
+    <span class="n">stepSize</span><span class="o">=</span><span class="mf">0.01</span><span class="p">,</span>           <span class="c1"># Learning rate óptimo</span>
+    <span class="n">maxIter</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span>
+    <span class="n">blockSize</span><span class="o">=</span><span class="mi">128</span><span class="p">,</span>           <span class="c1"># Block size para más datos</span>
+    <span class="n">solver</span><span class="o">=</span><span class="s2">&quot;l-bfgs&quot;</span><span class="p">,</span>         <span class="c1"># Algoritmo eficiente</span>
+    <span class="n">tol</span><span class="o">=</span><span class="mf">1e-06</span><span class="p">,</span>
+    <span class="n">seed</span><span class="o">=</span><span class="mi">42</span>
+<span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell tag_remove-input docutils container">
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Entrenando modelo final-----
+Entrenamiento completado en 5.36 minutos
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell tag_remove-input docutils container">
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Evaluando modelo final con métricas
+Tiempo de evaluación: 0.00 minutos
+
+════════════════════════════════════════════════════════════════════════════════
+RENDIMIENTO DEL MEJOR MODELO - MÉTRICAS COMPLETAS
+════════════════════════════════════════════════════════════════════════════════
+Métrica         Train      Test       Diferencia  
+────────────────────────────────────────────────────────────────────────────────
+AUC_ROC         0.7426    0.7440    0.0014
+AUC_PR          0.5004    0.5026    0.0022
+F1              0.7808    0.7829    0.0020
+Precision       0.8232    0.8243    0.0011
+Recall          0.8275    0.8288    0.0013
+Accuracy        0.8275    0.8288    0.0013
+════════════════════════════════════════════════════════════════════════════════
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell tag_remove-input docutils container">
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>MATRIZ DE CONFUSIÓN
+════════════════════════════════════════
+Actual \ Predicted |  0  |  1  |
+-------------------|------|-----|
+        0          |212951|2468 |
+-------------------|------|-----|
+        1          |43557 |9909 |
+-------------------|------|-----|
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell tag_remove-input docutils container">
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>MÉTRICAS CALCULADAS DIRECTAMENTE DESDE SPARK:
+ class_0: Precision=0.8302, Recall=0.9885, F1=0.9025
+ class_1: Precision=0.8006, Recall=0.1853, F1=0.3010
+
+ Matriz de Confusión:
+True Negatives (TN):  212951
+False Positives (FP): 2468
+False Negatives (FN): 43557
+True Positives (TP):  9909
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell tag_remove-input docutils container">
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span> ANÁLISIS DE OVERFITTING:
+✅ AUC_ROC: Buen generalización (Diff = 0.0014)
+✅ AUC_PR: Buen generalización (Diff = 0.0022)
+✅ F1: Buen generalización (Diff = 0.0020)
+✅ Precision: Buen generalización (Diff = 0.0011)
+✅ Recall: Buen generalización (Diff = 0.0013)
+✅ Accuracy: Buen generalización (Diff = 0.0013)
+</pre></div>
+</div>
+</div>
+</div>
+<p>El modelo final demuestra un excelente rendimiento en términos de generalización, con diferencias mínimas entre las métricas de entrenamiento y prueba (todas inferiores al 0,23 %), lo que indica una efectiva prevención del sobreajuste. Un AUC-ROC de 0,7440 y una precisión del 82,88 % reflejan una capacidad predictiva sólida y consistente.</p>
+<p>Sin embargo, persiste un desafío crítico en el desequilibrio de clases: mientras que la clase mayoritaria (0) muestra un rendimiento excepcional con un recall del 98,85 % —capturando casi todos sus casos verdaderos—, la clase minoritaria (1) tiene un recall extremadamente bajo del 18,53 %, lo que significa que el modelo solo identifica correctamente menos de una quinta parte de los casos positivos reales.</p>
+<p>Esta disparidad significativa, que se evidencia en los 43 557 falsos negativos frente a los 9909 verdaderos positivos, indica que el modelo tiende a predecir la clase mayoritaria. Aunque las métricas agregadas son sólidas, el bajo índice de recuperación para la clase 1 limita considerablemente la utilidad del modelo en aplicaciones en las que la detección de casos positivos es crucial, como en el diagnóstico médico o la detección de fraudes, ya que los falsos negativos pueden tener consecuencias muy graves. Se recomienda implementar estrategias adicionales para abordar este desequilibrio, como ajustes en los umbrales de clasificación, técnicas de muestreo o ponderación de clases.</p>
+</section>
+</section>
+
+    <script type="text/x-thebe-config">
+    {
+        requestKernel: true,
+        binderOptions: {
+            repo: "binder-examples/jupyter-stacks-datascience",
+            ref: "master",
+        },
+        codeMirrorConfig: {
+            theme: "abcdef",
+            mode: "python"
+        },
+        kernelOptions: {
+            name: "python3",
+            path: "./."
+        },
+        predefinedOutput: true
+    }
+    </script>
+    <script>kernelName = 'python3'</script>
+
+                </article>
+              
+
+              
+              
+              
+              
+                <footer class="prev-next-footer d-print-none">
+                  
+<div class="prev-next-area">
+    <a class="left-prev"
+       href="scklearn.html"
+       title="previous page">
+      <i class="fa-solid fa-angle-left"></i>
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">previous</p>
+        <p class="prev-next-title"><strong>Modelo MLP con <code class="docutils literal notranslate"><span class="pre">sklearn</span></code></strong></p>
+      </div>
+    </a>
+    <a class="right-next"
+       href="comparative.html"
+       title="next page">
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">next</p>
+        <p class="prev-next-title"><strong>Análisis comparativo</strong></p>
+      </div>
+      <i class="fa-solid fa-angle-right"></i>
+    </a>
+</div>
+                </footer>
+              
+            </div>
+            
+            
+              
+                <div class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
+
+
+  <div class="sidebar-secondary-item">
+  <div class="page-toc tocsection onthispage">
+    <i class="fa-solid fa-list"></i> Contents
+  </div>
+  <nav class="bd-toc-nav page-toc">
+    <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#funciones-de-evaluacion">Funciones de evaluación</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#encontrar-los-mejores-hiperparametros">Encontrar los mejores hiperparámetros</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#mlp-con-los-mejores-hiperparametros">MLP con los mejores hiperparámetros</a></li>
+</ul>
+  </nav></div>
+
+</div></div>
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+<div class="bd-footer-content__inner container">
+  
+  <div class="footer-item">
+    
+<p class="component-author">
+By Daniella Guerra
+</p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+
+  <p class="copyright">
+    
+      © Copyright 2023.
+      <br/>
+    
+  </p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+</div>
+          </footer>
+        
+
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script src="_static/scripts/bootstrap.js?digest=dfe6caa3a7d634c4db9b"></script>
+<script src="_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b"></script>
+
+  <footer class="bd-footer">
+  </footer>
+  </body>
+</html>

@@ -181,6 +181,8 @@
 <li class="toctree-l1"><a class="reference internal" href="EDA.html"><strong>Análisis exploratorio de datos</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="variables_interes.html"><strong>Selección de variables de interés</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="scklearn.html"><strong>Modelo MLP con <code class="docutils literal notranslate"><span class="pre">sklearn</span></code></strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="MyPySpark.html"><strong>Modelo MLP con <code class="docutils literal notranslate"><span class="pre">PySpark</span></code></strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="comparative.html"><strong>Análisis comparativo</strong></a></li>
 </ul>
 
     </div>
@@ -377,6 +379,7 @@ document.write(`
             <nav aria-label="Page">
                 <ul class="visible nav section-nav flex-column">
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#leading-club"><strong>Leading Club</strong></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#el-problema-de-estudio"><strong>El problema de estudio</strong></a></li>
 </ul>
             </nav>
         </div>
@@ -389,19 +392,30 @@ document.write(`
                 <article class="bd-article">
                   
   <section class="tex2jax_ignore mathjax_ignore" id="prediccion-de-prestamos-default">
-<h1>Predicción de prestamos DEFAULT<a class="headerlink" href="#prediccion-de-prestamos-default" title="Link to this heading">#</a></h1>
+<h1><strong>Predicción de prestamos DEFAULT</strong><a class="headerlink" href="#prediccion-de-prestamos-default" title="Link to this heading">#</a></h1>
 <p>Este sample book presenta la implementación de un modelo de red neuronal multicapa, el cual tiene el objetivo de predecir si un préstamo será un default o pagado en su totalidad.</p>
 <p>El dataset reúne los registros históricos de la empresa Lending Club.</p>
 <section id="leading-club">
 <h2><strong>Leading Club</strong><a class="headerlink" href="#leading-club" title="Link to this heading">#</a></h2>
 <p>Es una compañía estadounidense de préstamo entre particulares, con sede en San Francisco (California).</p>
 <p>Lending club permite a sus prestatarios crear listas de préstamos en su página web aportando datos de ellos mismos y de los préstamos que les gustaría obtener. Todos los préstamos son préstamos a particulares no asegurados que pueden rondar entre 1.000 y 35.000 dólares. En función de la puntuación de crédito del prestatario, el historial de crédito, de la cantidad solicitada y del ratio entre ingresos y gastos del prestatario, Lending Club determina si el prestatario es digno de confianza y asigna a los préstamos que son aprobados un grado de crédito que determina la tasas y el tipo de interés a pagar.</p>
+</section>
+<section id="el-problema-de-estudio">
+<h2><strong>El problema de estudio</strong><a class="headerlink" href="#el-problema-de-estudio" title="Link to this heading">#</a></h2>
+<p>El objetivo es predecir si un préstamo emitido resultará en <code class="docutils literal notranslate"><span class="pre">default(1)</span></code> o <code class="docutils literal notranslate"><span class="pre">pagado(0)</span></code>.</p>
+<p>Se quiere identificar correctamente cuales son los prestatarios que van a incumplir con el pago de su préstamo.</p>
+<p>Queremos reducir el error de costo y los errores <strong>FALSE NEGATIVE</strong>, los casos en que se predice que NO incumplirán, pero si incumplen. Este es el error más costoso para los bancos, ya que se presta dinero a un prestatario que no va a pagar.</p>
+<p>Para el modelo se realiza estandarización <code class="docutils literal notranslate"><span class="pre">StandardScaler</span></code> de las variables numéricas y codificación <code class="docutils literal notranslate"><span class="pre">OneHotEncoder</span></code> para las variables categóricas.</p>
+<p>Se dividió el dataset de datos de manera estratificada (80-20).</p>
+<p>Aplicamos técnicas para el balanceo de clases en el conjunto de entrenamiento.</p>
 <div class="toctree-wrapper compound">
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="manejo_dataraw.html"><strong>Preprocesamiento de datos</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="EDA.html"><strong>Análisis exploratorio de datos</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="variables_interes.html"><strong>Selección de variables de interés</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="scklearn.html"><strong>Modelo MLP con <code class="docutils literal notranslate"><span class="pre">sklearn</span></code></strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="MyPySpark.html"><strong>Modelo MLP con <code class="docutils literal notranslate"><span class="pre">PySpark</span></code></strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="comparative.html"><strong>Análisis comparativo</strong></a></li>
 </ul>
 </div>
 </section>
@@ -463,6 +477,7 @@ document.write(`
   <nav class="bd-toc-nav page-toc">
     <ul class="visible nav section-nav flex-column">
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#leading-club"><strong>Leading Club</strong></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#el-problema-de-estudio"><strong>El problema de estudio</strong></a></li>
 </ul>
   </nav></div>
 
